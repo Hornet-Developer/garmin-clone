@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "Knockout 28";
+  src: url(/fonts/5C0E5FAA5296E3B2E.woff2) format("woff2"),
+    url(/fonts/5C0E5FAA5296E3B2E.woff) format("woff");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Knockout 30";
+  src: url(/fonts/1742F6AC26514B7F2.woff2) format("woff2"),
+    url(/fonts/1742F6AC26514B7F2.woff) format("woff");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.garmin.com/fonts.gstatic.com/s/roboto/v29/KFOmCnqEu92Fr1Mu4mxP.ttf)
+    format("truetype");
+}
+@font-face {
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(https://fonts.garmin.com/fonts.gstatic.com/s/roboto/v29/KFOlCnqEu92Fr1MmEU9fBBc9.ttf)
+    format("truetype");
+}
+@font-face {
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(https://fonts.garmin.com/fonts.gstatic.com/s/roboto/v29/KFOlCnqEu92Fr1MmWUlfBBc9.ttf)
+    format("truetype");
+}
+
+@layer base {
+  html {
+    font-family: "Knockout 30", "Knockout 28", Roboto, ui-sans-serif, system-ui,
+      -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial,
+      "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+      "Segoe UI Symbol", "Noto Color Emoji";
+    font-size: 16px;
+    -webkit-font-smoothing: auto;
+    background-color: #fff;
+    color: #000;
+  }
+}

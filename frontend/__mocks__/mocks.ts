@@ -1,0 +1,342 @@
+export const fashionNews = [
+  {
+    id: 0,
+    img: "/imgs/slide-1.jpg",
+  },
+  {
+    id: 1,
+    img: "/imgs/slide-2.jpg",
+  },
+  {
+    id: 2,
+    img: "/imgs/slide-3.jpg",
+  },
+];
+
+export const products = [
+  {
+    id: 0,
+    name: "name_0",
+    price: 5000,
+    main_image: "/imgs/products_0/image_main",
+  },
+  {
+    id: 1,
+    name: "name_1",
+    price: 5000,
+    main_image: "/imgs/products_1/image_main",
+  },
+  {
+    id: 2,
+    name: "name_2",
+    price: 5000,
+    main_image: "/imgs/products_2/image_main",
+  },
+  {
+    id: 3,
+    name: "name_3",
+    price: 5000,
+    main_image: "/imgs/products_3/image_main",
+  },
+  {
+    id: 4,
+    name: "name_4",
+    price: 5000,
+    main_image: "/imgs/products_4/image_main",
+  },
+  {
+    id: 5,
+    name: "name_5",
+    price: 5000,
+    main_image: "/imgs/products_5/image_main",
+  },
+  {
+    id: 6,
+    name: "name_6",
+    price: 5000,
+    main_image: "/imgs/products_6/image_main",
+  },
+];
+
+// export const products = [
+//   {
+//     id: 0,
+//     name: "name_0",
+//     price: 5000,
+//     old_price: 5000,
+//     new_price: 5000,
+//     description: "description_0",
+//     full_description: "full_description_0",
+//     characteristics: [
+//       "characteristic 1",
+//       "characteristic 2",
+//       "characteristic 3",
+//     ],
+//     reviews: [
+//       {
+//         name: "sara oran",
+//         date: "10 février 2022",
+//         stars: 4.5,
+//         comment: "trés bonne qualité",
+//       },
+//       {
+//         name: "ahlem alger",
+//         date: "11 février 2022",
+//         stars: 5,
+//         comment: "le produit est comme la photo",
+//       },
+//       {
+//         name: "amina telemcen",
+//         date: "11 février 2022",
+//         stars: 4.5,
+//         comment: "livraison rapide",
+//       },
+//     ],
+//     main_image: "/imgs/products_0/image_main",
+//     images_list: [
+//       "/imgs/products_0/image_0",
+//       "/imgs/products_0/image_1",
+//       "/imgs/products_0/image_2",
+//       "/imgs/products_0/image_3",
+//       "/imgs/products_0/image_4",
+//     ],
+//   },
+//   {
+//     id: 1,
+//     name: "name_1",
+//     price: 10000,
+//     description: "description_1",
+//     full_description: "full_description_1",
+//     characteristics: [
+//       "characteristic 1",
+//       "characteristic 2",
+//       "characteristic 3",
+//     ],
+//     reviews: [
+//       {
+//         name: "sara oran",
+//         date: "10 février 2022",
+//         stars: 4.5,
+//         comment: "trés bonne qualité",
+//       },
+//       {
+//         name: "ahlem alger",
+//         date: "11 février 2022",
+//         stars: 5,
+//         comment: "le produit est comme la photo",
+//       },
+//       {
+//         name: "amina telemcen",
+//         date: "11 février 2022",
+//         stars: 4.5,
+//         comment: "livraison rapide",
+//       },
+//     ],
+//     main_image: "/imgs/products_1/image_main",
+//     images_list: [
+//       "/imgs/products_1/image_0",
+//       "/imgs/products_1/image_1",
+//       "/imgs/products_1/image_2",
+//       "/imgs/products_1/image_3",
+//       "/imgs/products_1/image_4",
+//     ],
+//   },
+//   {
+//     id: 2,
+//     name: "name_2",
+//     price: 20000,
+//     description: "description_2",
+//     full_description: "full_description_2",
+//     characteristics: [
+//       "characteristic 1",
+//       "characteristic 2",
+//       "characteristic 3",
+//     ],
+//     reviews: [
+//       {
+//         name: "sara oran",
+//         date: "10 février 2022",
+//         stars: 4.5,
+//         comment: "trés bonne qualité",
+//       },
+//       {
+//         name: "ahlem alger",
+//         date: "11 février 2022",
+//         stars: 5,
+//         comment: "le produit est comme la photo",
+//       },
+//       {
+//         name: "amina telemcen",
+//         date: "11 février 2022",
+//         stars: 4.5,
+//         comment: "livraison rapide",
+//       },
+//     ],
+//     main_image: "/imgs/products_2/image_main",
+//     images_list: [
+//       "/imgs/products_2/image_0",
+//       "/imgs/products_2/image_1",
+//       "/imgs/products_2/image_2",
+//       "/imgs/products_2/image_3",
+//       "/imgs/products_2/image_4",
+//     ],
+//   },
+//   {
+//     id: 3,
+//     name: "name_3",
+//     price: 30000,
+//     description: "description_3",
+//     full_description: "full_description_3",
+//     characteristics: [
+//       "characteristic 1",
+//       "characteristic 2",
+//       "characteristic 3",
+//     ],
+//     reviews: [
+//       {
+//         name: "sara oran",
+//         date: "10 février 2022",
+//         stars: 4.5,
+//         comment: "trés bonne qualité",
+//       },
+//       {
+//         name: "ahlem alger",
+//         date: "11 février 2022",
+//         stars: 5,
+//         comment: "le produit est comme la photo",
+//       },
+//       {
+//         name: "amina telemcen",
+//         date: "11 février 2022",
+//         stars: 4.5,
+//         comment: "livraison rapide",
+//       },
+//     ],
+//     main_image: "/imgs/products_3/image_main",
+//     images_list: [
+//       "/imgs/products_3/image_0",
+//       "/imgs/products_3/image_1",
+//       "/imgs/products_3/image_2",
+//       "/imgs/products_3/image_3",
+//       "/imgs/products_3/image_4",
+//     ],
+//   },
+//   {
+//     id: 4,
+//     name: "name_4",
+//     price: 40000,
+//     description: "description_4",
+//     full_description: "full_description_4",
+//     characteristics: [
+//       "characteristic 1",
+//       "characteristic 2",
+//       "characteristic 3",
+//     ],
+//     reviews: [
+//       {
+//         name: "sara oran",
+//         date: "10 février 2022",
+//         stars: 4.5,
+//         comment: "trés bonne qualité",
+//       },
+//       {
+//         name: "ahlem alger",
+//         date: "11 février 2022",
+//         stars: 5,
+//         comment: "le produit est comme la photo",
+//       },
+//       {
+//         name: "amina telemcen",
+//         date: "11 février 2022",
+//         stars: 4.5,
+//         comment: "livraison rapide",
+//       },
+//     ],
+//     main_image: "/imgs/products_4/image_main",
+//     images_list: [
+//       "/imgs/products_4/image_0",
+//       "/imgs/products_4/image_1",
+//       "/imgs/products_4/image_2",
+//       "/imgs/products_4/image_3",
+//       "/imgs/products_4/image_4",
+//     ],
+//   },
+//   {
+//     id: 5,
+//     name: "name_5",
+//     price: 50000,
+//     description: "description_5",
+//     characteristics: [
+//       "characteristic 1",
+//       "characteristic 2",
+//       "characteristic 3",
+//     ],
+//     reviews: [
+//       {
+//         name: "sara oran",
+//         date: "10 février 2022",
+//         stars: 4.5,
+//         comment: "trés bonne qualité",
+//       },
+//       {
+//         name: "ahlem alger",
+//         date: "11 février 2022",
+//         stars: 5,
+//         comment: "le produit est comme la photo",
+//       },
+//       {
+//         name: "amina telemcen",
+//         date: "11 février 2022",
+//         stars: 4.5,
+//         comment: "livraison rapide",
+//       },
+//     ],
+//     main_image: "/imgs/products_5/image_main",
+//     images_list: [
+//       "/imgs/products_5/image_0",
+//       "/imgs/products_5/image_1",
+//       "/imgs/products_5/image_2",
+//       "/imgs/products_5/image_3",
+//       "/imgs/products_5/image_4",
+//     ],
+//   },
+//   {
+//     id: 6,
+//     name: "name_6",
+//     price: 60000,
+//     description: "description_6",
+//     characteristics: [
+//       "characteristic 1",
+//       "characteristic 2",
+//       "characteristic 3",
+//     ],
+//     reviews: [
+//       {
+//         name: "sara oran",
+//         date: "10 février 2022",
+//         stars: 4.5,
+//         comment: "trés bonne qualité",
+//       },
+//       {
+//         name: "ahlem alger",
+//         date: "11 février 2022",
+//         stars: 5,
+//         comment: "le produit est comme la photo",
+//       },
+//       {
+//         name: "amina telemcen",
+//         date: "11 février 2022",
+//         stars: 4.5,
+//         comment: "livraison rapide",
+//       },
+//     ],
+//     main_image: "/imgs/products_6/image_main",
+//     images_list: [
+//       "/imgs/products_6/image_0",
+//       "/imgs/products_6/image_1",
+//       "/imgs/products_6/image_2",
+//       "/imgs/products_6/image_3",
+//       "/imgs/products_6/image_4",
+//     ],
+//   },
+// ];

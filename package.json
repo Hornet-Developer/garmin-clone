@@ -1,0 +1,13 @@
+{
+  "name": "garmin-clone",
+  "version": "1.0.0",
+  "description": "\"cloning garmin website\"",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Abdelkader Riazi",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^7.2.2"
+  }
+}

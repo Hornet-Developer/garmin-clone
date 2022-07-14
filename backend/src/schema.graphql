@@ -1,0 +1,189 @@
+scalar Date
+
+enum Sort {
+  asc
+  desc
+}
+
+input productFilter {
+  take: Int
+  gender: Gender
+  price: Sort
+  date: Sort
+}
+
+type Query {
+  banners: [Banner!]!
+  featureds: [Featured!]!
+  pods: [Pod!]!
+  categories: [Category!]!
+  products(
+    filter: productFilter
+    search: String
+    categoryId: String
+    serieId: String
+  ): [Product!]!
+  productsByCategory(categoryId: String!, serieId: String): [Product!]!
+}
+
+# type Mutation {}
+
+# type Subscription {}
+
+enum Gender {
+  Male
+  Female
+  None
+}
+
+type Banner {
+  id: ID!
+  imgM: String
+  imgT: String
+  imgD: String
+  title: String!
+  subtitle: String!
+  createdAt: Date!
+}
+
+type Featured {
+  id: ID!
+  img: String!
+  title: String!
+  subtitle: String!
+  new: Boolean!
+  sale: Boolean!
+  createdAt: Date!
+}
+
+type Pod {
+  id: ID!
+  img: String!
+  title: String!
+  createdAt: Date!
+}
+
+type CoverImgList {
+  id: ID!
+  img: String!
+  title: String!
+  subtitle: String!
+}
+
+type Category {
+  id: ID!
+  name: String!
+  displayName: String!
+  img: String!
+  title: String!
+  coverImg: String!
+  coverImgsList: [CoverImgList]
+  series: [Serie!]!
+  products: [Product!]!
+}
+
+type Serie {
+  id: ID!
+  name: String!
+  products: [Product!]!
+}
+
+type ChosenFeature {
+  id: ID!
+  name: String!
+  option: String!
+}
+
+type ProductFeature {
+  id: ID!
+  name: String!
+  description: String
+  items: [String!]!
+}
+
+type Model {
+  id: ID!
+  color: String!
+  img: String!
+}
+
+type Product {
+  id: ID!
+  name: String!
+  description: String
+  subDescription: String
+  subscriptionUrl: String
+  partNumber: String!
+  gender: Gender
+  price: Float!
+  formattedPrice: String!
+  oldPrice: Float
+  formattedOldPrice: String
+  interestFree: Float
+  formattedInterestFree: String
+  imgList: [String!]!
+  features: [ProductFeature]
+  models: [Model]
+  video: String
+  sale: Boolean
+  available: Boolean
+  new: Boolean
+  createdAt: Date!
+}
+
+type CartItem {
+  id: ID!
+  product: Product!
+  quantity: Int!
+  model: Model
+  feature: ChosenFeature
+  createdAt: Date!
+}
+
+type Cart {
+  id: ID!
+  subtotal: Float!
+  formattedSubtotal: String!
+  estimatedTotal: Float!
+  formattedEstimatedTotal: String!
+  expires: Date
+  inSession: Boolean
+  cartItems: [CartItem]
+  createdAt: Date!
+}
+
+enum Role {
+  Admin
+  Guest
+  Customer
+}
+
+interface User {
+  id: ID!
+  role: Role!
+  createdAt: Date!
+}
+
+type Admin {
+  id: ID!
+  username: String!
+  role: Role!
+  isActive: Boolean!
+  createdAt: Date!
+}
+
+type Customer {
+  id: ID!
+  username: String!
+  role: Role!
+  isActive: Boolean!
+  cart: Cart!
+  createdAt: Date!
+}
+
+type Guest {
+  id: ID!
+  role: Role!
+  cart: Cart
+  createdAt: Date!
+}
