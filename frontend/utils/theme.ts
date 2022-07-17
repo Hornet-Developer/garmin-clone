@@ -2,6 +2,11 @@ import { DefaultTheme } from "styled-components";
 import colors from "tailwindcss/colors";
 
 const theme: DefaultTheme = {
+  screens: {
+    tablet: "640px",
+    laptop: "990px",
+    desktop: "1280px",
+  },
   colors: {
     white: colors.white,
     black: colors.black,

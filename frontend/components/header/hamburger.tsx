@@ -1,4 +1,4 @@
-import { useToogleNav } from "./context";
+import { useToogleNav } from "contexts/toggle-nav";
 import { HamburgerBox, HamburgerItem } from "./styles";
 
 const Hamburger = () => {

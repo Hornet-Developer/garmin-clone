@@ -1,7 +1,7 @@
-import { CategoriesProvider } from "./categories";
+import { ToggleNavProvider } from "./toggle-nav";
 
 const Provider = ({ children }: { children: React.ReactNode }) => (
-  <CategoriesProvider>{children}</CategoriesProvider>
+  <ToggleNavProvider>{children}</ToggleNavProvider>
 );
 
 export default Provider;

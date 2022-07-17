@@ -1,16 +1,22 @@
 import client from "apollo-client";
+import Banner from "components/banner";
+import Featureds from "components/featured";
 import Layout from "components/layout";
 import type { NextPage } from "next";
-import { CATEGORIES } from "queries/product";
-import { CategoryType } from "types/product";
+import { BANNERS, CATEGORIES, FEATUREDS, PODS } from "queries";
+import { BannerType, CategoryType, FeaturedType, PodType } from "types";
 
-const Home: NextPage<{ categories?: CategoryType[] }> = ({ categories }) => {
+const Home: NextPage<{
+  categories?: CategoryType[];
+  banners?: BannerType[];
+  featureds?: FeaturedType[];
+  pods?: PodType[];
+}> = ({ categories, banners, featureds, pods }) => {
   return (
-    <div>
-      <Layout title="Garmin International | Home" categories={categories}>
-        <></>
-      </Layout>
-    </div>
+    <Layout title="Garmin International | Home" categories={categories}>
+      <Banner banners={banners} />
+      <Featureds featureds={featureds} />
+    </Layout>
   );
 };
 
@@ -19,9 +25,24 @@ export async function getStaticProps() {
     query: CATEGORIES,
   });
 
+  const bannersResponse = await client.query({
+    query: BANNERS,
+  });
+
+  const featuredsResponse = await client.query({
+    query: FEATUREDS,
+  });
+
+  const podsResponse = await client.query({
+    query: PODS,
+  });
+
   return {
     props: {
       categories: categoriesResponse.data.categories,
+      banners: bannersResponse.data.banners,
+      featureds: featuredsResponse.data.featureds,
+      pods: podsResponse.data.pods,
     },
   };
 }

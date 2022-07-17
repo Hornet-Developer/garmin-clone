@@ -1,7 +1,7 @@
+import { useToogleNav } from "contexts/toggle-nav";
 import Link from "next/link";
-import { CategoryType } from "types/product";
-import { useToogleNav } from "./context";
-import { NavItemBox } from "./styles";
+import { CategoryType } from "types";
+import { NavBox, NavItemBox } from "./styles";
 
 const NavItem = ({ category }: { category: CategoryType }) => (
   <Link href="/">
@@ -15,13 +15,7 @@ const Nav = ({ categories }: { categories?: CategoryType[] }) => {
   const { isOpen } = useToogleNav();
 
   return (
-    <ul
-      className={`${
-        isOpen
-          ? "h-auto min-h-[100vh] absolute top-full bg-white w-[100vw] px-4"
-          : "hidden"
-      } flex flex-col`}
-    >
+    <NavBox isopen={isOpen ? isOpen.toString() : undefined}>
       {Array.isArray(categories) && categories.length ? (
         categories.map((category) => (
           <NavItem key={category.id} category={category} />
@@ -29,7 +23,7 @@ const Nav = ({ categories }: { categories?: CategoryType[] }) => {
       ) : (
         <></>
       )}
-    </ul>
+    </NavBox>
   );
 };
 
