@@ -15,3 +15,21 @@ export const Title = styled.h2.attrs({
     border-right: 30px solid transparent;
   }
 `;
+
+export const Card = styled.article.attrs({
+  className: "relative px-6 pt-16 pb-4 w-full h-full",
+})`
+  box-shadow: 0 2px 3px 1px ${(props) => props.theme.colors.grey["200"]};
+`;
+
+export const H2: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <h2 className="text-black text-2xl font-medium ">{children}</h2>
+);
+
+export const Subtitle: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => (
+  <p className="text-grey-800 text-sm font-roboto font-extralight whitespace-normal">
+    {children}
+  </p>
+);

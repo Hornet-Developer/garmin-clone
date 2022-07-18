@@ -1,15 +1,17 @@
 export const size = {
+  xs: "480px",
   sm: "640px",
   md: "768px",
   lg: "1024px",
   xl: "1280px",
   "2xl": "1536px",
-  tablet: "640px",
+  tablet: "540px",
   laptop: "990px",
   desktop: "1280px",
 };
 
 export const mq = {
+  xs: `(min-width: ${size.xs})`,
   sm: `(min-width: ${size.sm})`,
   md: `(min-width: ${size.md})`,
   lg: `(min-width: ${size.lg})`,

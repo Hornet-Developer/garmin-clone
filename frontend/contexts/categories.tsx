@@ -1,5 +1,5 @@
 import { createContext, useContext, useReducer } from "react";
-import { CategoryType } from "types/product";
+import { CategoryType } from "types";
 
 interface StateType {
   categories: CategoryType[] | null;

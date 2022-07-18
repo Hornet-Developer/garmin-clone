@@ -12,6 +12,7 @@ const OpacitySlider: React.FC<{
   children?: React.ReactNode;
 }> = ({ children }) => {
   const numItems = Children.count(children);
+
   const { state, next, previous } = useSliderReducer(numItems);
 
   useEffect(() => {

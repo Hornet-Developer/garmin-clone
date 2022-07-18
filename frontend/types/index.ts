@@ -32,3 +32,9 @@ export interface PodType {
   title: string;
   createdAt: string;
 }
+
+export interface ItemType {
+  img: string;
+  title: string;
+  [key: string]: any;
+}

@@ -2,6 +2,7 @@ import client from "apollo-client";
 import Banner from "components/banner";
 import Featureds from "components/featured";
 import Layout from "components/layout";
+import Pods from "components/pod";
 import type { NextPage } from "next";
 import { BANNERS, CATEGORIES, FEATUREDS, PODS } from "queries";
 import { BannerType, CategoryType, FeaturedType, PodType } from "types";
@@ -16,6 +17,7 @@ const Home: NextPage<{
     <Layout title="Garmin International | Home" categories={categories}>
       <Banner banners={banners} />
       <Featureds featureds={featureds} />
+      <Pods pods={pods} />
     </Layout>
   );
 };

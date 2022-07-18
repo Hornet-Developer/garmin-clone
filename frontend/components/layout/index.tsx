@@ -11,7 +11,7 @@ const Layout: React.FC<{
   const { isOpen } = useToogleNav();
 
   return (
-    <div>
+    <div className="">
       <Head title={title} />
       <Header categories={categories} />
       <main className={`${isOpen ? "hidden" : "block"} lg:block`}>
