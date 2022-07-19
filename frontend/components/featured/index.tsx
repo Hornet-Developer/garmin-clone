@@ -11,10 +11,9 @@ const Featureds: React.FC<{ featureds?: FeaturedType[] }> = ({ featureds }) => {
       </div>
 
       <FeaturedSlider>
-        {Array.isArray(featureds) &&
-          featureds.length &&
+        {featureds?.length &&
           featureds.map((featured) => (
-            <Featured featured={featured}></Featured>
+            <Featured key={featured.id} featured={featured}></Featured>
           ))}
       </FeaturedSlider>
     </section>

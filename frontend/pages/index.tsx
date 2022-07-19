@@ -1,5 +1,6 @@
 import client from "apollo-client";
 import Banner from "components/banner";
+import Categories from "components/category";
 import Featureds from "components/featured";
 import Layout from "components/layout";
 import Pods from "components/pod";
@@ -18,6 +19,7 @@ const Home: NextPage<{
       <Banner banners={banners} />
       <Featureds featureds={featureds} />
       <Pods pods={pods} />
+      <Categories categories={categories} />
     </Layout>
   );
 };

@@ -17,13 +17,14 @@ type Query {
   featureds: [Featured!]!
   pods: [Pod!]!
   categories: [Category!]!
+  category(id: String!, serieId: String): Category!
   products(
     filter: productFilter
     search: String
     categoryId: String
     serieId: String
   ): [Product!]!
-  productsByCategory(categoryId: String!, serieId: String): [Product!]!
+  productsByCategory(categoryId: String, serieId: String): [Product!]!
 }
 
 # type Mutation {}
@@ -79,7 +80,6 @@ type Category {
   coverImg: String!
   coverImgsList: [CoverImgList]
   series: [Serie!]!
-  products: [Product!]!
 }
 
 type Serie {

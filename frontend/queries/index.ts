@@ -50,3 +50,18 @@ export const PODS = gql`
     }
   }
 `;
+
+export const PRODUCTS_BY_CATEGORY = gql`
+  query ProductsByCategory($categoryId: String!, $serieId: String) {
+    productsByCategory(categoryId: $categoryId, serieId: $serieId) {
+      id
+      name
+      description
+      subDescription
+      formattedPrice
+      imgList
+      sale
+      new
+    }
+  }
+`;

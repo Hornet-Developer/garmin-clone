@@ -8,20 +8,40 @@ export const SliderContainer = styled.div.attrs<{ pos: number }>((props) => ({
   className: "relative flex items-stretch gap-6",
 }))<{
   pos: number;
-  itemWidth: number;
-  gap: number;
-  numItems: number;
+  itemwidths: { tablet: number; desktop: number; gap: number };
+  numitems: number;
 }>`
   @media ${mq.laptop} {
     transform: ${(props) => {
-      if (props.pos <= props.numItems - Math.ceil(100 / props.itemWidth)) {
-        return `translateX(-${props.itemWidth * props.pos}%)`;
+      if (
+        props.pos <=
+        props.numitems - Math.ceil(100 / props.itemwidths.tablet)
+      ) {
+        return `translateX(-${props.itemwidths.tablet * props.pos}%)`;
       }
       return `translateX(calc(-${
-        props.itemWidth * (props.numItems - Math.ceil(100 / props.itemWidth))
-      }% - calc(calc(${props.itemWidth * Math.ceil(100 / props.itemWidth)}% + ${
-        props.gap * (props.numItems - 1)
-      }px) - 100vw)))`;
+        props.itemwidths.tablet *
+        (props.numitems - Math.ceil(100 / props.itemwidths.tablet))
+      }% - calc(calc(${
+        props.itemwidths.tablet * Math.ceil(100 / props.itemwidths.tablet)
+      }% + ${props.itemwidths.gap * (props.numitems - 1)}px) - 100vw)))`;
+    }};
+    transition: transform 0.5s ease-out;
+  }
+  @media ${mq.desktop} {
+    transform: ${(props) => {
+      if (
+        props.pos <=
+        props.numitems - Math.ceil(100 / props.itemwidths.desktop)
+      ) {
+        return `translateX(-${props.itemwidths.desktop * props.pos}%)`;
+      }
+      return `translateX(calc(-${
+        props.itemwidths.desktop *
+        (props.numitems - Math.ceil(100 / props.itemwidths.desktop))
+      }% - calc(calc(${
+        props.itemwidths.desktop * Math.ceil(100 / props.itemwidths.desktop)
+      }% + ${props.itemwidths.gap * (props.numitems - 1)}px) - 100vw)))`;
     }};
     transition: transform 0.5s ease-out;
   }
@@ -30,7 +50,6 @@ export const SliderContainer = styled.div.attrs<{ pos: number }>((props) => ({
 export const SliderItem = styled.div<{
   index: number;
   pos: number;
-  gap: number;
 }>`
   width: 75vw;
   flex: 0 0 auto;
@@ -42,6 +61,9 @@ export const SliderItem = styled.div<{
   }
   @media ${mq.laptop} {
     width: calc(100% / 3.5);
+  }
+  @media ${mq.desktop} {
+    width: calc(100% / 4.5);
   }
 `;
 
@@ -66,7 +88,23 @@ export const BackBtn = styled(IoIosArrowBack).attrs(commonDirBtnAttrs)`
   left: 0;
 `;
 
-export const NextBtn = styled(IoIosArrowForward).attrs(commonDirBtnAttrs)`
+export const NextBtn = styled(IoIosArrowForward).attrs(commonDirBtnAttrs)<{
+  numitems: number;
+  pos: number;
+  itemwidths: { tablet: number; desktop: number };
+}>`
   ${commonDirBtn};
   right: 0;
+  @media ${mq.laptop} {
+    display: ${(props) =>
+      props.pos <= props.numitems - Math.ceil(100 / props.itemwidths.tablet)
+        ? "block"
+        : "none"};
+  }
+  @media ${mq.desktop} {
+    display: ${(props) =>
+      props.pos <= props.numitems - Math.ceil(100 / props.itemwidths.desktop)
+        ? "block"
+        : "none"};
+  }
 `;

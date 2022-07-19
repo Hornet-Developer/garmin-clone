@@ -8,6 +8,17 @@ module.exports = {
   ],
   theme: {
     extend: {},
+    screens: {
+      xs: "480px",
+      sm: "640px",
+      md: "768px",
+      lg: "1024px",
+      xl: "1280px",
+      "2xl": "1536px",
+      tablet: "540px",
+      laptop: "990px",
+      desktop: "1280px",
+    },
     colors: {
       white: colors.white,
       black: colors.black,

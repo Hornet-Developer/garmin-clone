@@ -1,3 +1,5 @@
+import { Gender } from "@faker-js/faker";
+
 export interface CategoryType {
   id: string;
   name: string;
@@ -35,6 +37,44 @@ export interface PodType {
 
 export interface ItemType {
   img: string;
-  title: string;
+  name?: string;
+  title?: string;
   [key: string]: any;
+}
+
+export interface Feature {
+  id: string;
+  name: string;
+  description?: string;
+  items?: string[];
+}
+
+export interface Model {
+  id: string;
+  color: string;
+  img: string;
+}
+
+export interface ProductType {
+  id: string;
+  name: string;
+  description?: string;
+  subDescription?: string;
+  subscriptionUrl?: string;
+  partNumber: string;
+  gender?: Gender;
+  price: number;
+  formattedPrice: string;
+  oldPrice: number;
+  formattedOldPrice: string;
+  interestFree: number;
+  formattedInterestFree: string;
+  imgList: string[];
+  features?: Feature[];
+  models?: Model[];
+  video?: string;
+  sale?: boolean;
+  available?: boolean;
+  new?: boolean;
+  createdAt: Date;
 }

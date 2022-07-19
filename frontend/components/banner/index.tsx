@@ -6,8 +6,7 @@ const Banners: React.FC<{ banners?: BannerType[] }> = ({ banners }) => {
   return (
     <section className="relative overflow-hidden bg-black">
       <OpacitySlider>
-        {Array.isArray(banners) &&
-          banners.length &&
+        {banners?.length &&
           banners.map((banner) => <Banner key={banner.id} banner={banner} />)}
       </OpacitySlider>
     </section>

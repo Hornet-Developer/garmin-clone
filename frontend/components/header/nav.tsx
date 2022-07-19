@@ -16,7 +16,7 @@ const Nav = ({ categories }: { categories?: CategoryType[] }) => {
 
   return (
     <NavBox isopen={isOpen ? isOpen.toString() : undefined}>
-      {Array.isArray(categories) && categories.length ? (
+      {categories?.length ? (
         categories.map((category) => (
           <NavItem key={category.id} category={category} />
         ))

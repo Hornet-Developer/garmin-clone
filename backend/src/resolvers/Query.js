@@ -16,6 +16,12 @@ function categories(_, __, { prisma }) {
   return prisma.category.findMany();
 }
 
+async function category(_, { id }, { prisma }) {
+  return prisma.category.findUnique({
+    where: { id },
+  });
+}
+
 async function products(
   _,
   { filter, search, categoryId, serieId },
@@ -145,6 +151,7 @@ const Query = {
   featureds,
   pods,
   categories,
+  category,
   products,
   productsByCategory,
 };
