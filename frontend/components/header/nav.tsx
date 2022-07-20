@@ -3,13 +3,17 @@ import Link from "next/link";
 import { CategoryType } from "types";
 import { NavBox, NavItemBox } from "./styles";
 
-const NavItem = ({ category }: { category: CategoryType }) => (
-  <Link href="/">
-    <NavItemBox>
-      <span className="uppercase tracking-wide">{category?.displayName}</span>
-    </NavItemBox>
-  </Link>
-);
+const NavItem = ({ category }: { category: CategoryType }) => {
+  const { closeNav } = useToogleNav();
+
+  return (
+    <Link href={`/categories/${category.id}`}>
+      <NavItemBox onClick={closeNav}>
+        <span className="uppercase tracking-wide">{category?.displayName}</span>
+      </NavItemBox>
+    </Link>
+  );
+};
 
 const Nav = ({ categories }: { categories?: CategoryType[] }) => {
   const { isOpen } = useToogleNav();

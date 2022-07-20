@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
 export const CATEGORIES = gql`
-  query Categories {
-    categories {
+  query Categories($hasSeries: Boolean!, $hasCoverImgsList: Boolean!) {
+    categories(hasSeries: $hasSeries, hasCoverImgsList: $hasCoverImgsList) {
       id
       name
       displayName
@@ -52,7 +52,7 @@ export const PODS = gql`
 `;
 
 export const PRODUCTS_BY_CATEGORY = gql`
-  query ProductsByCategory($categoryId: String!, $serieId: String) {
+  query ProductsByCategory($categoryId: String, $serieId: String) {
     productsByCategory(categoryId: $categoryId, serieId: $serieId) {
       id
       name
@@ -62,6 +62,33 @@ export const PRODUCTS_BY_CATEGORY = gql`
       imgList
       sale
       new
+    }
+  }
+`;
+
+export const CATEGORY = gql`
+  query Category(
+    $categoryId: String!
+    $serieId: String
+    $hasProducts: Boolean!
+  ) {
+    category(id: $categoryId, serieId: $serieId, hasProducts: $hasProducts) {
+      id
+      name
+      displayName
+      img
+      title
+      coverImg
+      coverImgsList {
+        id
+        img
+        title
+        subtitle
+      }
+      series {
+        id
+        name
+      }
     }
   }
 `;

@@ -5,7 +5,7 @@ export const PrimaryButton = styled.button.attrs<{ bg: "white" | "black" }>(
     ...props,
     className: `${
       props.bg === "black" ? "text-white" : "text-black"
-    } rounded font-roboto uppercase`,
+    } rounded font-roboto uppercase z-10`,
   })
 )<{ bg: "white" | "black" }>`
   transition: all 0.5s ease;

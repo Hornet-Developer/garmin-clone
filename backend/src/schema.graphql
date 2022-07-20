@@ -16,8 +16,8 @@ type Query {
   banners: [Banner!]!
   featureds: [Featured!]!
   pods: [Pod!]!
-  categories: [Category!]!
-  category(id: String!, serieId: String): Category!
+  categories(hasSeries: Boolean!, hasCoverImgsList: Boolean!): [Category!]!
+  category(id: String!, serieId: String, hasProducts: Boolean!): Category!
   products(
     filter: productFilter
     search: String
@@ -79,13 +79,13 @@ type Category {
   title: String!
   coverImg: String!
   coverImgsList: [CoverImgList]
-  series: [Serie!]!
+  series: [Serie]
 }
 
 type Serie {
   id: ID!
   name: String!
-  products: [Product!]!
+  products: [Product]
 }
 
 type ChosenFeature {

@@ -1,4 +1,5 @@
-function products({ id }, _, { prisma }) {
+function products({ id }, _, { prisma }, { variableValues }) {
+  if (variableValues.hasProducts === false) return null;
   return prisma.serie.findUnique({ where: { id } }).products();
 }
 

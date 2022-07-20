@@ -7,10 +7,11 @@ const CoverImgCard: React.FC<{
   item: ItemType;
   handleClick?: () => void;
   index?: number;
-}> = ({ item, handleClick, index }) => {
+  href?: string;
+}> = ({ item, handleClick, index, href }) => {
   return (
     <ImgBgCard index={index}>
-      <Link href="/">
+      <Link href={href || "/"}>
         <figure className="relative w-full">
           <img
             src={item.img}

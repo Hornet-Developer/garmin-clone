@@ -20,7 +20,7 @@ const FeaturedSlider: React.FC<{
   });
 
   return (
-    <div className="relative py-10 overflow-x-scroll lg:overflow-x-hidden">
+    <div className="relative py-10 overflow-x-scroll scroll-smooth lg:overflow-x-hidden">
       <SliderContainer
         pos={state.pos}
         numitems={numItems}

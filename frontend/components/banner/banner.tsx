@@ -2,7 +2,7 @@ import Link from "next/link";
 import { PrimaryButton } from "styles/buttons";
 import { Subtitle, Title } from "./styles";
 import { BannerType } from "types";
-import { mq, size } from "utils/intex";
+import { mq, size } from "utils";
 
 const Banner: React.FC<{ banner: BannerType }> = ({ banner }) => {
   return (

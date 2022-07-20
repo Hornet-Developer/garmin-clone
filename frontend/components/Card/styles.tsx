@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { mq } from "utils/intex";
 
 export const Card = styled.article.attrs({
   className: "flex relative w-auto cursor-pointer tablet:mx-0 tablet:w-2/4",

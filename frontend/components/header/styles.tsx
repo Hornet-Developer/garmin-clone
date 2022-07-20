@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { mq } from "utils/intex";
+import { mq, size } from "utils";
 
 export const Container = styled.header.attrs({
   className: "w-full flex flex-col items-stretch",
@@ -62,9 +62,10 @@ export const NavBox = styled.div.attrs<{ isopen: string | undefined }>(
   }
 `;
 
-export const NavItemBox = styled.li.attrs({
+export const NavItemBox = styled.li.attrs((props) => ({
+  ...props,
   className: "py-5 cursor-pointer lg:py-2",
-})`
+}))`
   border-bottom: 1px solid ${(props) => props.theme.colors.grey["300"]};
   @media ${mq.lg} {
     border-bottom: 0;

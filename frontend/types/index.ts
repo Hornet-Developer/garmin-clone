@@ -1,11 +1,12 @@
 import { Gender } from "@faker-js/faker";
 
-export interface CategoryType {
-  id: string;
-  name: string;
-  displayName: string;
+export type DispatchAction = (...args: any) => void;
+
+export interface ItemType {
   img: string;
-  title: string;
+  name?: string;
+  title?: string;
+  [key: string]: any;
 }
 
 export interface BannerType {
@@ -35,11 +36,52 @@ export interface PodType {
   createdAt: string;
 }
 
-export interface ItemType {
+export interface CategoryType {
+  id: string;
+  name: string;
+  displayName: string;
   img: string;
-  name?: string;
-  title?: string;
-  [key: string]: any;
+  title: string;
+  coverImg?: string;
+  coverImgsList?: CoverImgListType[];
+  series?: SerieType[];
+}
+
+export interface CoverImgListType {
+  id: string;
+  img: string;
+  title: string;
+  subtitle: string;
+}
+
+export interface SerieType {
+  id: string;
+  name: string;
+  products: ProductType[];
+}
+
+export interface ProductType {
+  id: string;
+  name: string;
+  description?: string;
+  subDescription?: string;
+  subscriptionUrl?: string;
+  partNumber?: string;
+  gender?: Gender;
+  price?: number;
+  formattedPrice: string;
+  oldPrice?: number;
+  formattedOldPrice?: string;
+  interestFree?: number;
+  formattedInterestFree?: string;
+  imgList: string[];
+  features?: Feature[];
+  models?: Model[];
+  video?: string;
+  sale?: boolean;
+  available?: boolean;
+  new?: boolean;
+  createdAt?: Date;
 }
 
 export interface Feature {
@@ -53,28 +95,4 @@ export interface Model {
   id: string;
   color: string;
   img: string;
-}
-
-export interface ProductType {
-  id: string;
-  name: string;
-  description?: string;
-  subDescription?: string;
-  subscriptionUrl?: string;
-  partNumber: string;
-  gender?: Gender;
-  price: number;
-  formattedPrice: string;
-  oldPrice: number;
-  formattedOldPrice: string;
-  interestFree: number;
-  formattedInterestFree: string;
-  imgList: string[];
-  features?: Feature[];
-  models?: Model[];
-  video?: string;
-  sale?: boolean;
-  available?: boolean;
-  new?: boolean;
-  createdAt: Date;
 }

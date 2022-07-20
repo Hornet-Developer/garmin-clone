@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useReducer } from "react";
+import { DispatchAction } from "types";
 
 export interface NavStateType {
   isOpen: boolean;
@@ -6,15 +7,21 @@ export interface NavStateType {
 
 export function reducer(
   state: NavStateType,
-  action: { type: "TOGGLE" | "DEFAULT" }
+  action: { type: "TOGGLE" | "CLOSE" | "DEFAULT" }
 ): NavStateType {
   const toggleNav = () => ({
     ...state,
     isOpen: !state.isOpen,
   });
 
+  const closeNav = () => ({
+    ...state,
+    isOpen: false,
+  });
+
   const actions = {
     TOGGLE: toggleNav,
+    CLOSE: closeNav,
     DEFAULT: () => {
       throw new Error("Action doesn't provided");
     },
@@ -24,7 +31,8 @@ export function reducer(
 }
 
 export const ToggleNavContext = createContext<
-  { state: NavStateType; toggleNav: () => void } | undefined
+  | { state: NavStateType; toggleNav: DispatchAction; closeNav: DispatchAction }
+  | undefined
 >(undefined);
 
 export const ToggleNavProvider: React.FC<{ children: React.ReactNode }> = ({
@@ -34,9 +42,12 @@ export const ToggleNavProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const toggleNav = useCallback(() => dispatch({ type: "TOGGLE" }), []);
 
+  const closeNav = useCallback(() => dispatch({ type: "CLOSE" }), []);
+
   const value = {
     state: { ...state },
     toggleNav,
+    closeNav,
   };
 
   return (
@@ -56,7 +67,8 @@ export const useToogleNav = () => {
   const {
     state: { isOpen },
     toggleNav,
+    closeNav,
   } = context;
 
-  return { isOpen, toggleNav };
+  return { isOpen, toggleNav, closeNav };
 };

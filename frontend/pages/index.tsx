@@ -1,6 +1,6 @@
 import client from "apollo-client";
 import Banner from "components/banner";
-import Categories from "components/category";
+import Categories from "components/categoriesGrid";
 import Featureds from "components/featured";
 import Layout from "components/layout";
 import Pods from "components/pod";
@@ -27,6 +27,7 @@ const Home: NextPage<{
 export async function getStaticProps() {
   const categoriesResponse = await client.query({
     query: CATEGORIES,
+    variables: { hasSeries: false, hasCoverImgsList: false },
   });
 
   const bannersResponse = await client.query({

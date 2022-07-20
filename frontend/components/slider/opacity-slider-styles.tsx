@@ -1,7 +1,7 @@
 import { IconBaseProps } from "react-icons";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import styled, { css, ThemedStyledProps } from "styled-components";
-import { mq } from "utils/intex";
+import { mq } from "utils";
 
 export const SliderContainer = styled.div.attrs<{ pos: number }>(
   (props, ref?: React.Ref<HTMLDivElement>) => ({
