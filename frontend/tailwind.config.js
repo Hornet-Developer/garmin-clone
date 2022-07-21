@@ -10,14 +10,14 @@ module.exports = {
     extend: {},
     screens: {
       xs: "480px",
+      tablet: "540px",
       sm: "640px",
       md: "768px",
+      laptop: "990px",
       lg: "1024px",
       xl: "1280px",
-      "2xl": "1536px",
-      tablet: "540px",
-      laptop: "990px",
       desktop: "1280px",
+      "2xl": "1536px",
     },
     colors: {
       white: colors.white,
