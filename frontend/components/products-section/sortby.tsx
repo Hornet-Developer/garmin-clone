@@ -1,14 +1,14 @@
-import { useToggle } from "hooks/useToggle";
+import { memo } from "react";
 import { DropDown } from "styles/components";
 import { DropdownBox } from "./styles";
 
-const SortBy = () => {
-  const { isOpen, toggleHandler } = useToggle();
-
+const SortBy: React.FC<{ cls: string }> = memo(({ cls }) => {
   return (
-    <div>
-      <label className="text-[0.8rem] font-medium font-roboto">
-        <span>Sort By</span>
+    <div className={cls}>
+      <label className="text-[0.8rem] font-medium font-roboto laptop:min-w-[30%]">
+        <span className="laptop:float-right laptop:text-sm laptop:text-grey-700">
+          Sort By
+        </span>
       </label>
       <DropdownBox>
         <DropDown>
@@ -20,6 +20,6 @@ const SortBy = () => {
       </DropdownBox>
     </div>
   );
-};
+});
 
 export default SortBy;

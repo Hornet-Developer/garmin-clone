@@ -13,6 +13,7 @@ const Home: NextPage<{
   banners?: BannerType[];
   featureds?: FeaturedType[];
   pods?: PodType[];
+  loading: boolean;
 }> = ({ categories, banners, featureds, pods }) => {
   return (
     <Layout title="Garmin International | Home" categories={categories}>

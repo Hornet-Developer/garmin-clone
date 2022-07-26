@@ -1,16 +1,16 @@
-import { Fragment } from "react";
-import { Devide } from "styles/components";
 import { SerieType } from "types";
 import Series from "./series";
 import SortBy from "./sortby";
 
-const FilterContent: React.FC<{ series?: SerieType[]; isOpen: boolean }> = ({
-  series,
-  isOpen,
-}) => {
+const FilterContent: React.FC<{
+  series?: SerieType[];
+  isOpen: boolean;
+}> = ({ series, isOpen }) => {
   return (
-    <div className={`${!isOpen ? "hidden" : ""} px-4 tracking-wide`}>
-      <SortBy />
+    <div
+      className={`${!isOpen ? "hidden" : ""} px-4 tracking-wide laptop:block`}
+    >
+      <SortBy cls="laptop:hidden" />
       {series?.length && <Series series={series} />}
     </div>
   );

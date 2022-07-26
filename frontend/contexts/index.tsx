@@ -1,7 +1,10 @@
+import { SsrLoadingProvider } from "./loading";
 import { ToggleNavProvider } from "./toggle-nav";
 
 const Provider = ({ children }: { children: React.ReactNode }) => (
-  <ToggleNavProvider>{children}</ToggleNavProvider>
+  <ToggleNavProvider>
+    <SsrLoadingProvider>{children}</SsrLoadingProvider>
+  </ToggleNavProvider>
 );
 
 export default Provider;

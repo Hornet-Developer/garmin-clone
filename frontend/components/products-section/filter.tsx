@@ -4,10 +4,12 @@ import { SerieType } from "types";
 import FilterContent from "./filter-content";
 import { ToggleFilterContainer } from "./styles";
 
-const Filter: React.FC<{ series?: SerieType[] }> = ({ series }) => {
+const Filter: React.FC<{
+  series?: SerieType[];
+}> = ({ series }) => {
   const { isOpen, toggleHandler } = useToggle();
   return (
-    <div className="pb-8">
+    <div className="pb-8 laptop:border-r-[1px] laptop:border-style-solid laptop:border-grey-300">
       <ToggleFilterContainer
         isopen={isOpen ? isOpen.toString() : undefined}
         onClick={toggleHandler}

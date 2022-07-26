@@ -1,25 +1,36 @@
-import { useSerieContext } from "contexts/serie";
+import { useSsrLoadingContext } from "contexts/loading";
+import { useRouter } from "next/router";
 import { useState } from "react";
 import { SerieType } from "types";
 import { initiateState } from "./helper";
 
 const Series: React.FC<{ series: SerieType[] }> = ({ series }) => {
-  const initailState = initiateState(series); //must use useMemo (later)
+  const router = useRouter();
+  const { samePageRef } = useSsrLoadingContext();
+
   const [checked, setChecked] = useState<{ [key: string]: boolean }>(
-    initailState
+    initiateState(series, router.query.serieId as string | undefined)
   );
-  const serieContext = useSerieContext();
 
   const handleChange = (id: string) => {
-    if (!checked[id]) serieContext.setSerie(id);
+    samePageRef.current = true;
+    if (!checked[id]) {
+      router.push(`/categories/${router.query.id}/?serieId=${id}`, undefined, {
+        shallow: true,
+      });
+    } else {
+      router.push(`/categories/${router.query.id}`, undefined, {
+        shallow: true,
+      });
+    }
     setChecked(() => ({
-      ...initailState,
+      ...initiateState(series),
       [id]: !checked[id],
     }));
   };
 
   return (
-    <div className="py-4 border-solid border-grey-300 border-b-[1px]">
+    <div className="py-4 border-solid border-grey-300 border-b-[1px] laptop:border-t-[1px]">
       <div className="font-bold text-[0.9rem]">Shop By Serie</div>
       {series.map((serie) => (
         <div
@@ -30,7 +41,7 @@ const Series: React.FC<{ series: SerieType[] }> = ({ series }) => {
             <input
               id={serie.id}
               type="checkbox"
-              checked={checked[serie.id]}
+              checked={checked[serie.id] || false}
               onChange={() => handleChange(serie.id)}
             />
             <label htmlFor={serie.id} className="ml-2">

@@ -1,4 +1,11 @@
 import styled from "styled-components";
+import { mq } from "utils";
+
+export const Container = styled.div.attrs({
+  className: "flex flex-col laptop:flex-row",
+})`
+  border-top: 1px solid ${(props) => props.theme.colors.grey["300"]};
+`;
 
 export const ToggleFilterContainer = styled.div.attrs<{
   isopen: string | undefined;
@@ -6,15 +13,18 @@ export const ToggleFilterContainer = styled.div.attrs<{
   props,
   className: `w-full py-4 px-4 flex justify-between items-center cursor-pointer ${
     props.isopen ? "pb-0" : ""
-  }`,
+  } laptop:w-[315px] laptop:pb-4`,
 }))<{ isopen: string | undefined }>`
-  border-top: 1px solid ${(props) => props.theme.colors.grey["300"]};
   border-bottom: ${(props) =>
     props.isopen ? null : `1px solid ${props.theme.colors.grey["300"]}`};
+  @media ${mq.laptop} {
+    border-bottom: 0;
+    cursor: default;
+  }
 `;
 
 export const DropdownBox = styled.div.attrs({
-  className: "relative",
+  className: "relative laptop:min-w-[70%]",
 })`
   &:after {
     position: absolute;
