@@ -1,9 +1,13 @@
+import { mq } from "utils";
+import { BreakpointProvider } from "./breakpoint";
 import { SsrLoadingProvider } from "./loading";
 import { ToggleNavProvider } from "./toggle-nav";
 
 const Provider = ({ children }: { children: React.ReactNode }) => (
   <ToggleNavProvider>
-    <SsrLoadingProvider>{children}</SsrLoadingProvider>
+    <BreakpointProvider queries={mq}>
+      <SsrLoadingProvider>{children}</SsrLoadingProvider>
+    </BreakpointProvider>
   </ToggleNavProvider>
 );
 

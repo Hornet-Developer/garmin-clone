@@ -1,6 +1,6 @@
 import client from "apollo-client";
 import Banner from "components/banner";
-import Categories from "components/categoriesGrid";
+import Categories from "components/categories-grid";
 import Featureds from "components/featured";
 import Layout from "components/layout";
 import Pods from "components/pod";

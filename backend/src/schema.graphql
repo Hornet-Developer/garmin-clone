@@ -17,7 +17,12 @@ type Query {
   featureds: [Featured!]!
   pods: [Pod!]!
   categories(hasSeries: Boolean!, hasCoverImgsList: Boolean!): [Category!]!
-  category(id: String!, serieId: String, hasProducts: Boolean!): Category!
+  category(
+    id: String!
+    serieId: String
+    hasProducts: Boolean!
+    hasSeries: Boolean!
+  ): Category!
   products(
     filter: productFilter
     search: String
@@ -25,6 +30,8 @@ type Query {
     serieId: String
   ): [Product!]!
   productsByCategory(categoryId: String, serieId: String): [Product!]!
+  product(id: String!): Product!
+  serie(id: String!, hasProducts: Boolean!): Serie!
 }
 
 # type Mutation {}
@@ -86,6 +93,7 @@ type Serie {
   id: ID!
   name: String!
   products: [Product]
+  categoryId: String
 }
 
 type ChosenFeature {
@@ -129,6 +137,7 @@ type Product {
   available: Boolean
   new: Boolean
   createdAt: Date!
+  serieId: String
 }
 
 type CartItem {

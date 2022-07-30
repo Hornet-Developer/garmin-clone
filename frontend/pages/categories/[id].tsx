@@ -11,7 +11,10 @@ const CategoryPage: NextPage<{
   products: ProductType[];
 }> = ({ category, products, categories }) => {
   return (
-    <Layout title="Garmin International | Home" categories={categories}>
+    <Layout
+      title={`${category.displayName} Category | Garmin International`}
+      categories={categories}
+    >
       <Category category={category} products={products} />
     </Layout>
   );
@@ -25,7 +28,11 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
 
   const categoryResponse = await client.query({
     query: CATEGORY,
-    variables: { categoryId: params?.id, hasProducts: false },
+    variables: {
+      categoryId: params?.id,
+      hasProducts: false,
+      hasSeries: true,
+    },
   });
 
   const productsResponse = await client.query({

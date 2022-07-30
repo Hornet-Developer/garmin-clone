@@ -1,3 +1,5 @@
+import { TMatches } from "contexts/breakpoint";
+
 export const size = {
   xs: "480px",
   tablet: "540px",
@@ -21,3 +23,11 @@ export const mq = {
   desktop: `(min-width: ${size.desktop})`,
   "2xl": `(min-width: ${size["2xl"]})`,
 };
+
+const initiateMQState = (mq: { [key: string]: string }) =>
+  Object.entries(mq).reduce((acc: TMatches, next) => {
+    acc[next[0]] = false;
+    return acc;
+  }, {});
+
+export const initialMQState = initiateMQState(mq);

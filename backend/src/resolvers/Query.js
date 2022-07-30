@@ -16,8 +16,14 @@ function categories(_, __, { prisma }) {
   return prisma.category.findMany();
 }
 
-async function category(_, { id }, { prisma }) {
+function category(_, { id }, { prisma }) {
   return prisma.category.findUnique({
+    where: { id },
+  });
+}
+
+function serie(_, { id }, { prisma }) {
+  return prisma.serie.findUnique({
     where: { id },
   });
 }
@@ -146,14 +152,22 @@ async function productsByCategory(_, { categoryId, serieId }, { prisma }) {
   return products;
 }
 
+function product(_, { id }, { prisma }) {
+  return prisma.product.findUnique({
+    where: { id },
+  });
+}
+
 const Query = {
   banners,
   featureds,
   pods,
   categories,
   category,
+  serie,
   products,
   productsByCategory,
+  product,
 };
 
 export default Query;

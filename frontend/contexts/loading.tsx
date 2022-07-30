@@ -3,17 +3,12 @@ import { createContext, useContext, useRef, useState } from "react";
 const SsrLoadingContext = createContext<{
   samePageRef: React.MutableRefObject<boolean>;
 }>({ samePageRef: { current: false } });
-// const SsrLoadingContext = createContext<{
-//   samePage: boolean;
-//   setsamePage: React.Dispatch<React.SetStateAction<boolean>>;
-// }>({ samePage: false, setsamePage: () => {} });
 
 export const SsrLoadingProvider = ({
   children,
 }: {
   children: React.ReactNode;
 }) => {
-  // const [samePage, setsamePage] = useState(false);
   const samePageRef = useRef(false);
 
   const value = {

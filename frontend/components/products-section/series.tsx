@@ -1,6 +1,6 @@
 import { useSsrLoadingContext } from "contexts/loading";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { SerieType } from "types";
 import { initiateState } from "./helper";
 
@@ -12,22 +12,29 @@ const Series: React.FC<{ series: SerieType[] }> = ({ series }) => {
     initiateState(series, router.query.serieId as string | undefined)
   );
 
-  const handleChange = (id: string) => {
-    samePageRef.current = true;
-    if (!checked[id]) {
-      router.push(`/categories/${router.query.id}/?serieId=${id}`, undefined, {
-        shallow: true,
-      });
-    } else {
-      router.push(`/categories/${router.query.id}`, undefined, {
-        shallow: true,
-      });
-    }
-    setChecked(() => ({
-      ...initiateState(series),
-      [id]: !checked[id],
-    }));
-  };
+  const handleChange = useCallback(
+    (id: string) => {
+      samePageRef.current = true;
+      if (!checked[id]) {
+        router.push(
+          `/categories/${router.query.id}/?serieId=${id}`,
+          undefined,
+          {
+            shallow: true,
+          }
+        );
+      } else {
+        router.push(`/categories/${router.query.id}`, undefined, {
+          shallow: true,
+        });
+      }
+      setChecked(() => ({
+        ...initiateState(series),
+        [id]: !checked[id],
+      }));
+    },
+    [samePageRef.current]
+  );
 
   return (
     <div className="py-4 border-solid border-grey-300 border-b-[1px] laptop:border-t-[1px]">
