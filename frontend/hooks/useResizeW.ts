@@ -1,10 +1,10 @@
 import { throttle } from "lodash";
-import { useLayoutEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 export const useResizeW = () => {
   const [sizeW, setSize] = useState(0);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const updateSize = throttle(function () {
       setSize(window.innerWidth);
     }, 200);

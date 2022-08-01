@@ -32,9 +32,8 @@ export const ToggleNavProvider: React.FC<{ children: React.ReactNode }> = ({
 export const useToogleNav = () => {
   const context = useContext(ToggleNavContext);
 
-  if (!context) {
+  if (!context)
     throw new Error("useToogleNav must be used within a ToggleNavProvider");
-  }
 
   const {
     state: { isOpen },

@@ -23,6 +23,9 @@ const theme: DefaultTheme = {
       200: "#0089d7",
       300: "#0079be",
     },
+    green: {
+      50: "#777b00",
+    },
   },
 };
 

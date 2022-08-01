@@ -1,4 +1,4 @@
-import { createContext, useContext, useLayoutEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { initialMQState } from "utils";
 
 export interface TMatches {
@@ -16,7 +16,7 @@ export const BreakpointProvider = ({
 }) => {
   const [queryMatch, setQueryMatch] = useState(initialMQState);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const mediaQueryLists: { [key: string]: any } = {};
     const keys = Object.keys(queries);
     let isAttached = false;
@@ -73,8 +73,8 @@ export const BreakpointProvider = ({
 
 export function useBreakpoint() {
   const context = useContext(BreakpointContext);
-  if (!context) {
+  if (!context)
     throw new Error("useBreakpoint must be used within BreakpointProvider");
-  }
+
   return context;
 }

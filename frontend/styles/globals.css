@@ -70,8 +70,8 @@
   }
 
   .font-opensans {
-    font-family: "Open Sans", "Helvetica Neue", ui-sans-serif, system-ui,
-      -apple-system, BlinkMacSystemFont;
+    font-family: open-sans, "Roboto", ui-sans-serif, system-ui, -apple-system,
+      BlinkMacSystemFont;
   }
 
   .flex-0-auto {

@@ -26,7 +26,7 @@ const Header = ({ categories }: { categories?: CategoryType[] }) => (
     </TopSection>
     <BottomSection>
       <Link href="/">
-        <div className="text-center uppercase cursor-pointer">
+        <div className="text-center uppercase cursor-pointer leading-5">
           free ground shipping on orders $25 and up. free 2nd-day shipping on
           most orders $499 and up.*
         </div>

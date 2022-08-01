@@ -13,7 +13,9 @@ export const useIntersectionObserver = (numItems: number) => {
   const [isActive, setisActive] = useState(initialState);
 
   const addNode = useCallback(
-    (node: HTMLLIElement) => nodesRef.current.push(node),
+    (node: HTMLLIElement) => {
+      if (nodesRef.current.length < numItems) nodesRef.current.push(node);
+    },
     [nodesRef.current]
   );
 

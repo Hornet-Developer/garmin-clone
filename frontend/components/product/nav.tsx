@@ -6,17 +6,17 @@ const Nav: React.FC<{
   category: CategoryType;
 }> = ({ serie, category }) => {
   return (
-    <nav className="relative w-full py-4 text-grey-900 font-opensans tracking-widest font-normal">
+    <nav className="relative w-full py-4 text-grey-900 font-opensans tracking-widest font-normal uppercase text-[0.95rem]">
       <div className="relative text-center">
-        <div className="mb-2 tablet:mb:0 tablet:inline tablet:px-4 tablet:border-r-[1px] tablet:border-style-solid tablet:border-grey-900">
+        <div className="tablet:inline tablet:px-4 tablet:border-r-[1px] tablet:border-style-solid tablet:border-grey-900 pb-0">
           <Link href={`/categories/${category.id}`}>
-            <span>{category.displayName}</span>
+            <span className="p-0">{category.displayName}</span>
           </Link>
         </div>
 
         <div className="tablet:inline tablet:px-4">
           <Link href={`/categories/${category.id}/?serieId=${serie.id}`}>
-            <span>{serie.name}</span>
+            <span className="p-0">{serie.name}</span>
           </Link>
         </div>
       </div>

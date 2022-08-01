@@ -75,8 +75,8 @@ export interface ProductType {
   interestFree?: number;
   formattedInterestFree?: string;
   imgList: string[];
-  features?: Feature[];
-  models?: Model[];
+  features?: FeatureType[];
+  models?: ModelType[];
   video?: string;
   sale?: boolean;
   available?: boolean;
@@ -84,15 +84,20 @@ export interface ProductType {
   createdAt?: Date;
 }
 
-export interface Feature {
+export interface FeatureType {
   id: string;
   name: string;
   description?: string;
   items?: string[];
 }
 
-export interface Model {
+export interface ModelType {
   id: string;
   color: string;
   img: string;
+}
+
+export interface TOrderFeature {
+  id: string;
+  label: string;
 }
