@@ -1,5 +1,4 @@
-import CoverImgCard from "components/Card/CoverImgCard";
-import Link from "next/link";
+import CoverImgCard from "components/card/CoverImgCard";
 import { CategoryType } from "types";
 
 const Categories: React.FC<{ categories?: CategoryType[] }> = ({

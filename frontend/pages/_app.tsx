@@ -15,7 +15,13 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ApolloProvider client={client}>
       <ThemeProvider theme={theme}>
-        <Provider>
+        <Provider
+          authInfo={{
+            user: pageProps.user,
+            token: pageProps.refreshToken,
+            expires_in: pageProps.expires_in,
+          }}
+        >
           <Component {...pageProps} />
         </Provider>
       </ThemeProvider>

@@ -99,5 +99,45 @@ export interface ModelType {
 
 export interface TOrderFeature {
   id: string;
-  label: string;
+  name: string;
+  item: string;
+}
+
+enum Role {
+  Admin = "Admin",
+  Customer = "Customer",
+}
+
+export interface UserType {
+  id: string;
+  username: string;
+  isActive: string;
+  role: Role;
+  cart: CartType;
+  createdAt?: Date;
+}
+
+export interface CartType {
+  id: string;
+  subtotal?: number;
+  formattedSubtotal?: string;
+  estimatedSubtotal?: number;
+  formattedEstimatedTotal?: string;
+  cartItems: CartItemType[];
+  createdAt: Date;
+}
+
+export interface CartItemType {
+  id: string;
+  product: ProductType;
+  quantity: number;
+  model: ModelType;
+  features: TOrderFeature[];
+  createdAt: Date;
+}
+
+export interface TOrderBody {
+  productId: string;
+  modelId: string;
+  features: Pick<TOrderFeature, "name" | "item">[];
 }

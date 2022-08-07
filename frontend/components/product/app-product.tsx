@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { ProductType } from "types";
 import CarouselItem from "./carousel-item";
 import CarouselScroller from "./carousel-scroller";
@@ -5,10 +6,15 @@ import ProductInfo from "./product-info";
 import { ProductInfoProvider } from "./product-info-context";
 
 const AppProduct: React.FC<{ product: ProductType }> = ({ product }) => {
-  const features = product.features?.map((feature) => ({
-    id: feature.id,
-    label: feature.items?.[0] as string,
-  }));
+  const features = useMemo(
+    () =>
+      product.features?.map((feature) => ({
+        id: feature.id,
+        name: feature.name,
+        item: feature.items?.[0] as string,
+      })),
+    []
+  );
 
   return (
     <section className="relative flex flex-col lg:flex-row lg:pt-4 lg:max-w-[1280px] lg:mx-auto">

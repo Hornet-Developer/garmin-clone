@@ -9,6 +9,7 @@ import {
   SERIE_PRODUCT_PAGE,
 } from "queries";
 import { CategoryType, ProductType, SerieType } from "types";
+import { fetchToken } from "utils/helpers";
 
 const ProductPage: NextPage<{
   categories: CategoryType[];
@@ -26,7 +27,13 @@ const ProductPage: NextPage<{
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+export const getServerSideProps: GetServerSideProps = async ({
+  params,
+  req,
+}) => {
+  const { refreshToken, user, expires_in } = await fetchToken(
+    req.headers.cookie
+  );
   const categoriesResponse = await client.query({
     query: CATEGORIES,
     variables: { hasSeries: false, hasCoverImgsList: false },
@@ -60,6 +67,9 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
       product: productResponse.data.product,
       serie: serieResponse.data.serie,
       category: categoryResponse.data.category,
+      refreshToken,
+      user,
+      expires_in,
     },
   };
 };

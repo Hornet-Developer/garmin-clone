@@ -44,6 +44,14 @@
     format("truetype");
 }
 
+@font-face {
+  font-family: "open-sans";
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url(/fonts/OpenSans-bold.ttf) format("truetype");
+}
+
 @layer base {
   html {
     font-family: "Knockout 30", "Knockout 28", Roboto, ui-sans-serif, system-ui,
@@ -70,7 +78,7 @@
   }
 
   .font-opensans {
-    font-family: open-sans, "Roboto", ui-sans-serif, system-ui, -apple-system,
+    font-family: "open-sans", "Roboto", ui-sans-serif, system-ui, -apple-system,
       BlinkMacSystemFont;
   }
 

@@ -1,4 +1,4 @@
-import CoverImgCard from "components/Card/CoverImgCard";
+import CoverImgCard from "components/card/CoverImgCard";
 import { PodType } from "types";
 
 const Section2: React.FC<{ pods?: PodType[] }> = ({ pods }) => {

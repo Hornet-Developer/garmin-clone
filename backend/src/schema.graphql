@@ -34,9 +34,24 @@ type Query {
   serie(id: String!, hasProducts: Boolean!): Serie!
 }
 
-# type Mutation {}
+type Mutation {
+  login(username: String!): AuthSession
+  refreshToken: AuthSession
+  logout: LogoutSession
+  addItemToCart(cartId: String, item: CartItemInput): Cart
+}
 
 # type Subscription {}
+
+type AuthSession {
+  user: Customer
+  refresh_token: String
+  expires_in: String
+}
+
+type LogoutSession {
+  message: String
+}
 
 enum Gender {
   Male
@@ -99,7 +114,7 @@ type Serie {
 type ChosenFeature {
   id: ID!
   name: String!
-  option: String!
+  item: String!
 }
 
 type ProductFeature {
@@ -140,30 +155,56 @@ type Product {
   serieId: String
 }
 
+input CartItemInput {
+  productId: String!
+  modelId: String
+  features: [ChosenFeatureInput]
+}
+
+input ChosenFeatureInput {
+  name: String!
+  item: String!
+}
+
 type CartItem {
   id: ID!
   product: Product!
   quantity: Int!
   model: Model
-  feature: ChosenFeature
+  features: [ChosenFeature]
   createdAt: Date!
 }
 
 type Cart {
   id: ID!
-  subtotal: Float!
-  formattedSubtotal: String!
-  estimatedTotal: Float!
-  formattedEstimatedTotal: String!
+  subtotal: Float
+  formattedSubtotal: String
+  estimatedTotal: Float
+  formattedEstimatedTotal: String
   expires: Date
   inSession: Boolean
   cartItems: [CartItem]
   createdAt: Date!
 }
 
+enum OrderStatus {
+  PANDING
+  SHIPPED
+  CANCELED
+  ARRIVED
+  COMPLETED
+}
+
+type Order {
+  id: String!
+  status: OrderStatus!
+  products: [CartItem!]!
+  createdAt: Date!
+}
+
 enum Role {
   Admin
-  Guest
+  # Guest
   Customer
 }
 
@@ -190,9 +231,9 @@ type Customer {
   createdAt: Date!
 }
 
-type Guest {
-  id: ID!
-  role: Role!
-  cart: Cart
-  createdAt: Date!
-}
+# type Guest {
+#   id: ID!
+#   role: Role!
+#   cart: Cart
+#   createdAt: Date!
+# }

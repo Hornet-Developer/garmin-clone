@@ -10,13 +10,13 @@ const Nav: React.FC<{
       <div className="relative text-center">
         <div className="tablet:inline tablet:px-4 tablet:border-r-[1px] tablet:border-style-solid tablet:border-grey-900 pb-0">
           <Link href={`/categories/${category.id}`}>
-            <span className="p-0">{category.displayName}</span>
+            <span className="p-0 cursor-pointer">{category.displayName}</span>
           </Link>
         </div>
 
         <div className="tablet:inline tablet:px-4">
           <Link href={`/categories/${category.id}/?serieId=${serie.id}`}>
-            <span className="p-0">{serie.name}</span>
+            <span className="p-0 cursor-pointer">{serie.name}</span>
           </Link>
         </div>
       </div>

@@ -1,5 +1,4 @@
-import SimpleCard from "components/Card/SimpleCard";
-import Link from "next/link";
+import SimpleCard from "components/card/SimpleCard";
 import { PodType } from "types";
 
 const Section1: React.FC<{ pods?: PodType[] }> = ({ pods }) => {

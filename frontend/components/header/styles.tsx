@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { mq, size } from "utils";
+import { mq } from "utils";
 
 export const Container = styled.header.attrs({
   className: "w-full flex flex-col items-stretch",

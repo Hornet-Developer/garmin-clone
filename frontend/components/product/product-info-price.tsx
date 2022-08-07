@@ -13,7 +13,7 @@ interface TPrices {
 
 const ProductPrice: React.FC<{ prices: Readonly<TPrices> }> = ({ prices }) => {
   return (
-    <div className="w-full text-center my-2">
+    <div className="w-full text-center my-2 lg:text-start">
       {prices.formattedOldPrice && (
         <LineThrough>
           <span className="relative -top-[1px]">$</span>
@@ -43,7 +43,7 @@ const ProductPrice: React.FC<{ prices: Readonly<TPrices> }> = ({ prices }) => {
         <p className="text-xs">
           4 interest-free payments of ${prices.interestFree} with{" "}
           <span className="font-extrabold text-sm">Klarna</span>.{" "}
-          <span className="underline">Learn More</span>
+          <span className="underline cursor-pointer">Learn More</span>
         </p>
       </div>
     </div>

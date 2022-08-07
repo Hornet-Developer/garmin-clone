@@ -4,9 +4,10 @@ import Categories from "components/categories-grid";
 import Featureds from "components/featured";
 import Layout from "components/layout";
 import Pods from "components/pod";
-import type { NextPage } from "next";
+import type { GetServerSideProps, NextPage } from "next";
 import { BANNERS, CATEGORIES, FEATUREDS, PODS } from "queries";
 import { BannerType, CategoryType, FeaturedType, PodType } from "types";
+import { fetchToken } from "utils/helpers";
 
 const Home: NextPage<{
   categories?: CategoryType[];
@@ -25,7 +26,11 @@ const Home: NextPage<{
   );
 };
 
-export async function getStaticProps() {
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+  const { refreshToken, user, expires_in } = await fetchToken(
+    req.headers.cookie
+  );
+
   const categoriesResponse = await client.query({
     query: CATEGORIES,
     variables: { hasSeries: false, hasCoverImgsList: false },
@@ -49,8 +54,11 @@ export async function getStaticProps() {
       banners: bannersResponse.data.banners,
       featureds: featuredsResponse.data.featureds,
       pods: podsResponse.data.pods,
+      refreshToken,
+      user,
+      expires_in,
     },
   };
-}
+};
 
 export default Home;

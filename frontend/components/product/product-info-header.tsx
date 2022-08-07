@@ -6,11 +6,11 @@ const Header: React.FC<{ product: ProductType }> = ({ product }) => {
     state: { model },
   } = useProductInfoContext();
   return (
-    <div className="w-full text-center font-opensans antialiased">
+    <div className="w-full text-center font-opensans antialiased lg:text-start">
       <h1 className="text-[2rem] font-semibold tracking-wider">
         {product.name}
       </h1>
-      <h2 className="text-[1.2rem]">
+      <h2 className="text-[1.2rem] lg:max-w-[400px]">
         {model ? model.color : product.subDescription}
       </h2>
       <h3 className="text-xs font-opensans py-3">

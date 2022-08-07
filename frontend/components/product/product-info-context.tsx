@@ -14,7 +14,9 @@ enum TAction {
 
 interface TActionType {
   type: TAction;
-  feature?: TOrderFeature;
+  id?: string;
+  name?: string;
+  item?: string;
   model?: ModelType;
 }
 
@@ -34,16 +36,21 @@ const reducer: (
   const updateFeature = () => {
     const noUpdatedFeatures =
       state.features?.length &&
-      state.features?.filter(
-        (feature) => feature.id !== (action.feature?.id as string)
-      );
+      state.features?.filter((feature) => feature.id !== (action.id as string));
     return {
       ...state,
       features:
         noUpdatedFeatures && noUpdatedFeatures?.length
-          ? [...noUpdatedFeatures, action.feature as TOrderFeature]
-          : action.feature
-          ? [action.feature]
+          ? [
+              ...noUpdatedFeatures,
+              {
+                id: action.id,
+                name: action.name,
+                item: action.item,
+              } as TOrderFeature,
+            ]
+          : action.id && action.name && action.item
+          ? [{ id: action.id, name: action.name, item: action.item }]
           : undefined,
     };
   };
@@ -78,8 +85,8 @@ export const ProductInfoProvider = ({
 }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const updateFeature = ({ feature }: { feature: TOrderFeature }) =>
-    dispatch({ type: TAction.UPDATE_FEATURE, feature });
+  const updateFeature = ({ id, name, item }: TOrderFeature) =>
+    dispatch({ type: TAction.UPDATE_FEATURE, id, name, item });
 
   const changeModel = ({ model }: { model: ModelType }) =>
     dispatch({ type: TAction.CHANGE_MODEL, model });

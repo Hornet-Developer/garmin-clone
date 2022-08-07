@@ -43,7 +43,6 @@ const Head: React.FC<{ title: string }> = ({ title }) => {
         rel="manifest"
         href="https://static.garmin.com/favicons/site.webmanifest"
       />
-      <link rel="stylesheet" href="https://use.typekit.net/fti0yto.css" />
       <title>{title}</title>
       <meta
         data-n-head="ssr"

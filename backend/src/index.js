@@ -3,6 +3,7 @@ import { createServer } from "http";
 import express from "express";
 import fs from "fs";
 import path from "path";
+import cookieParser from "cookie-parser";
 import { ApolloServerPluginDrainHttpServer } from "apollo-server-core";
 import { makeExecutableSchema } from "@graphql-tools/schema";
 import { WebSocketServer } from "ws";
@@ -12,7 +13,7 @@ import { PubSub } from "graphql-subscriptions";
 
 import createSeed from "./seeds";
 import resolvers from "./resolvers";
-import { getDynamicContext, getUserId } from "./utils";
+import { APP_SECRET, getDynamicContext, getUserId } from "./utils";
 
 const typeDefs = fs.readFileSync(
   path.join(__dirname, "schema.graphql"),
@@ -27,6 +28,8 @@ async function main() {
 
   const app = express();
   const httpServer = createServer(app);
+
+  app.use(cookieParser(APP_SECRET));
 
   const schema = makeExecutableSchema({
     typeDefs,
@@ -57,11 +60,13 @@ async function main() {
     schema,
     csrfPrevention: true,
     cache: "bounded",
-    context: async ({ req }) => {
+    context: async ({ req, res }) => {
       const user =
         req && req.headers.authorization && (await getUserId(prisma.user, req));
+
       return {
         ...req,
+        res,
         prisma,
         pubsub,
         userId: user ? user.userId : null,
@@ -86,6 +91,10 @@ async function main() {
   server.applyMiddleware({
     app,
     path: "/graphql",
+    cors: {
+      credentials: true,
+      origin: ["http://localhost:3000", "https://studio.apollographql.com"],
+    },
   });
 
   await new Promise((resolve) =>

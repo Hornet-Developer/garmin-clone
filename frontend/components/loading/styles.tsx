@@ -2,9 +2,9 @@ import styled, { keyframes } from "styled-components";
 
 export const FullScreen = styled.div.attrs({
   className:
-    "fixed w-[100vw] h-[100vh] flex justify-center items-center left-0 top-0",
+    "fixed w-[100vw] h-[100vh] flex justify-center items-center left-0 bottom-0",
 })`
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: rgba(255, 255, 255, 0.7);
 `;
 
 export const Loader = () => (

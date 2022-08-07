@@ -1,12 +1,21 @@
 import { mq } from "utils";
+import { AuthProvider, TAuthInfo } from "./auth";
 import { BreakpointProvider } from "./breakpoint";
 import { SsrLoadingProvider } from "./loading";
 import { ToggleNavProvider } from "./toggle-nav";
 
-const Provider = ({ children }: { children: React.ReactNode }) => (
+const Provider = ({
+  children,
+  authInfo,
+}: {
+  children: React.ReactNode;
+  authInfo: TAuthInfo;
+}) => (
   <ToggleNavProvider>
     <BreakpointProvider queries={mq}>
-      <SsrLoadingProvider>{children}</SsrLoadingProvider>
+      <AuthProvider authInfo={authInfo}>
+        <SsrLoadingProvider>{children}</SsrLoadingProvider>
+      </AuthProvider>
     </BreakpointProvider>
   </ToggleNavProvider>
 );

@@ -22,6 +22,14 @@ export const compareIdCallback = (prev: any[], next: any[]) => {
   );
 };
 
+export const compareObjectIdCallback = (
+  prev: { id: string; [key: string]: any } | null,
+  next: { id: string; [key: string]: any } | null
+) => {
+  if (!prev || !next) return false;
+  return prev?.id === next?.id;
+};
+
 export const compareObjectProps: (
   prev: { [key: string]: any },
   next: { [key: string]: any }

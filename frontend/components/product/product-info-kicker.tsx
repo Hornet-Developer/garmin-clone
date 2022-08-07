@@ -14,7 +14,7 @@ const Box: React.FC<{ label: string }> = memo(({ label }) => (
 
 const Kicker: React.FC<{ kickers: TKicker }> = ({ kickers }) => {
   return (
-    <div className="w-full flex flex-col items-center gap-2">
+    <div className="w-full flex flex-col items-center gap-2 lg:items-start">
       {kickers.sale && <Box label="Sale" />}
       {kickers.new && <Box label="New" />}
     </div>

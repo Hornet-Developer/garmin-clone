@@ -70,10 +70,11 @@ enum Gender {
 }
 
 model ChosenFeature {
-  id        String     @id @default(auto()) @map("_id") @db.ObjectId
-  name      String
-  option    String
-  cartItems CartItem[]
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  name       String
+  item       String
+  cartItem   CartItem? @relation(fields: [cartItemId], references: [id])
+  cartItemId String?   @db.ObjectId
 }
 
 model ProductFeature {
@@ -122,17 +123,18 @@ model Product {
 }
 
 model CartItem {
-  id              String         @id @default(auto()) @map("_id") @db.ObjectId
-  product         Product        @relation(fields: [productId], references: [id])
-  productId       String         @db.ObjectId
-  quantity        Int
-  model           Model?         @relation(fields: [modelId], references: [id])
-  modelId         String?        @db.ObjectId
-  feature         ChosenFeature? @relation(fields: [chosenFeatureId], references: [id])
-  chosenFeatureId String?        @db.ObjectId
-  cart            Cart?          @relation(fields: [cartId], references: [id], onUpdate: Cascade, onDelete: Cascade)
-  cartId          String?        @db.ObjectId
-  createdAt       DateTime       @default(now())
+  id        String          @id @default(auto()) @map("_id") @db.ObjectId
+  product   Product         @relation(fields: [productId], references: [id])
+  productId String          @db.ObjectId
+  quantity  Int             @default(1)
+  model     Model?          @relation(fields: [modelId], references: [id])
+  modelId   String?         @db.ObjectId
+  features  ChosenFeature[]
+  cart      Cart?           @relation(fields: [cartId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  cartId    String?         @db.ObjectId
+  createdAt DateTime        @default(now())
+  order     Order?          @relation(fields: [orderId], references: [id])
+  orderId   String?         @db.ObjectId
 }
 
 model Cart {
@@ -144,14 +146,14 @@ model Cart {
   expires                 DateTime?
   inSession               Boolean    @default(true)
   cartItems               CartItem[]
-  user                    User       @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
-  userId                  String     @unique @db.ObjectId
+  // user                    User?      @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  // userId                  String?    @unique @db.ObjectId
+  user                    User?
   createdAt               DateTime   @default(now())
 }
 
 enum Role {
   Admin
-  Guest
   Customer
 }
 
@@ -160,6 +162,23 @@ model User {
   username  String?  @unique
   role      Role
   isActive  Boolean  @default(true)
-  cart      Cart?
+  // cart      Cart?
+  cart      Cart?    @relation(fields: [cartId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  cartId    String?  @unique @db.ObjectId
   createdAt DateTime @default(now())
+}
+
+enum OrderStatus {
+  PANDING
+  SHIPPED
+  CANCELED
+  ARRIVED
+  COMPLETED
+}
+
+model Order {
+  id        String      @id @default(auto()) @map("_id") @db.ObjectId
+  status    OrderStatus
+  products  CartItem[]
+  createdAt DateTime    @default(now())
 }
