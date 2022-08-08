@@ -1,7 +1,7 @@
 import { AuthenticationError } from "apollo-server-core";
-import { signToken } from "../utils";
+import { cartItem, signToken, updateCart } from "../utils";
 
-async function login(_, { username }, { prisma, res }) {
+async function login(_, { username }, { prisma, res, cookies }) {
   const user = await prisma.user.findUnique({ where: { username } });
   if (!user) throw new AuthenticationError(`${username} doesn't exist`);
 
@@ -14,6 +14,29 @@ async function login(_, { username }, { prisma, res }) {
     // signed: true,
     maxAge: expires_in,
   });
+
+  if (cookies?.cartId) {
+    const guestCart = await prisma.cart.findUnique({
+      where: { id: cookies.cartId },
+      include: { cartItems: true },
+    });
+
+    const cartItemIds = guestCart.cartItems?.map((item) => ({ id: item.id }));
+
+    await prisma.cart.update({
+      where: { id: guestCart.id },
+      data: { cartItems: { disconnect: cartItemIds } },
+    });
+
+    await prisma.cart.update({
+      where: { id: user.cartId },
+      data: { cartItems: { connect: cartItemIds } },
+    });
+
+    await prisma.cart.delete({ where: { id: guestCart.id } });
+
+    res.clearCookie("cartId");
+  }
 
   return {
     user,
@@ -70,67 +93,36 @@ function logout(_, __, { res }) {
 // }
 
 async function addItemToCart(_, { item }, { prisma, userId, res, cookies }) {
-  let cart;
-  const cartId = cookies?.cartId;
+  const guestCartId = cookies?.cartId;
 
-  const user = userId
-    ? await prisma.user.findUnique({ where: { id: userId } })
-    : undefined;
-
-  cart = user
-    ? await prisma.cart.findUnique({ where: { id: user.cartId } })
-    : cartId
-    ? await prisma.cart.findUnique({ where: { id: cartId } })
-    : undefined;
-
-  if (!cart) {
-    cart = userId
-      ? await prisma.cart.create({
-          data: { user: { connect: { id: userId } } },
-        })
-      : await prisma.cart.create({
-          data: {},
-        });
+  if (userId) {
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) throw new UserInputError(`${userId} doesn't exist`);
+    return updateCart({
+      id: user.cartId,
+      item: cartItem(item),
+      cartQueryUpdate: prisma.cart.update,
+    });
   }
 
-  if (!userId || !cartId) {
-    res.cookie("cartId", cart.id);
+  if (guestCartId) {
+    return updateCart({
+      id: guestCartId,
+      item: cartItem(item),
+      cartQueryUpdate: prisma.cart.update,
+    });
   }
 
-  // const existCart =
-  //   userId || cartId
-  //     ? await prisma.cart.findMany({
-  //         where: { OR: [{ userId }, { id: cartId }] },
-  //       })
-  //     : undefined;
+  const cart = await prisma.cart.create({
+    data: {
+      cartItems: {
+        create: [cartItem(item)],
+      },
+    },
+  });
 
-  // let cart;
+  res.cookie("cartId", cart.id);
 
-  // if (!existCart || (existCart && existCart.length === 0)) {
-  //   const data = userId ? { userId } : {};
-  //   cart = await prisma.cart.create({
-  //     data,
-  //   });
-  //   if (!userId) {
-  //     res.cookie("cartId", cart.id);
-  //   }
-  // }
-  // console.log(cartId);
-
-  // return prisma.cart.update({
-  //   where: { id: existCart?.[0].id || cart.id },
-  //   data: {
-  //     cartItems: {
-  //       create: [
-  //         {
-  //           product: { connect: { id: item.productId } },
-  //           model: { connect: { id: item.modelId } },
-  //           features: { create: [...item.features] },
-  //         },
-  //       ],
-  //     },
-  //   },
-  // });
   return cart;
 }
 

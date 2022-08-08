@@ -1,35 +1,39 @@
-import { useMemo } from "react";
+import { useState } from "react";
 import { Fragment } from "react";
 import { CategoryType, ProductType, SerieType } from "types";
-import AppProduct from "./app-product";
-import { SliderProvider } from "./vertical-slider-context";
-import Nav from "./nav";
+import AddedToCart from "./added-to-cart";
+import Product from "./product";
+import { useProductInfoContext } from "./product-info-context";
 
-const Product: React.FC<{
+const ProductMain: React.FC<{
   product: ProductType;
   serie: SerieType;
   category: CategoryType;
 }> = ({ product, serie, category }) => {
-  const numCollections = useMemo(
-    () =>
-      product.imgList?.length
-        ? Math.ceil((product.imgList.length * 64) / 360)
-        : 0,
-    [product.imgList.length]
-  );
+  const [isAddedToCart, serIsAddedToCart] = useState(false);
+  const {
+    state: { model },
+  } = useProductInfoContext();
 
   return (
     <Fragment>
-      <Nav serie={serie} category={category} />
-      <SliderProvider
-        numCollections={numCollections}
-        numCollectionItems={5}
-        numItems={product.imgList?.length || 0}
-      >
-        <AppProduct product={product} />
-      </SliderProvider>
+      {!isAddedToCart ? (
+        <Product
+          category={category}
+          product={product}
+          serie={serie}
+          serIsAddedToCart={serIsAddedToCart}
+        />
+      ) : (
+        <AddedToCart
+          name={product.name}
+          imgUrl={product.imgList[0]}
+          description={product.subDescription}
+          modelName={model?.color}
+        />
+      )}
     </Fragment>
   );
 };
 
-export default Product;
+export default ProductMain;

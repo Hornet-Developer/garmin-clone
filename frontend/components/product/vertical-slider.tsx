@@ -19,7 +19,7 @@ const VerticalSlider: React.FC<{ children: React.ReactNode }> = ({
   } = useSliderContext();
 
   return (
-    <div className="hidden relative w-auto h-full flex flex-col lg:block">
+    <div className="hidden relative w-auto h-full lg:block">
       <SliderBtn
         opacity={collection === 0 ? "opacity-0" : "opacity-100"}
         onClick={() => {

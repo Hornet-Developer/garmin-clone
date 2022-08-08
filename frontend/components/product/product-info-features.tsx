@@ -49,7 +49,7 @@ const Features: React.FC<{ features: FeatureType[] }> = ({ features }) => {
                 </Fragment>
               )}
             </div>
-            <div>
+            <div className="text-center">
               {feature.items &&
                 feature.items.map((item, index) => (
                   <FeatureItem

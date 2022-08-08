@@ -46,7 +46,6 @@ export async function getUserId(userQuery, req, authToken) {
       const token = authHeader.replace("Bearer ", "");
       if (!token) {
         return { userId: null, userRole: null };
-        // throw new AuthenticationError("No token found");
       }
       const payload = getTokenPayload(token);
       if (!payload.sub) {
@@ -65,7 +64,7 @@ export async function getUserId(userQuery, req, authToken) {
     return { userId, userRole: user.role };
   }
 
-  throw new AuthenticationError("Not authenticated");
+  return { userId: null, userRole: null };
 }
 
 export async function getDynamicContext(userQuery, ctx) {
@@ -78,3 +77,29 @@ export async function getDynamicContext(userQuery, ctx) {
   const { userId, userRole } = await getUserId(userQuery, undefined, token);
   return { userId, userRole };
 }
+
+export const updateCart = ({ id, item, cartQueryUpdate }) =>
+  cartQueryUpdate({
+    where: { id },
+    data: {
+      cartItems: {
+        create: [item],
+      },
+    },
+  });
+
+export const cartItem = (item) => {
+  const createdItem = {
+    product: { connect: { id: item.productId } },
+  };
+  if (item.modelId) createdItem.model = { connect: { id: item.modelId } };
+  if (item.features) {
+    /*
+      create or connect (to do later)
+      feature.name
+      feature.item
+    */
+    createdItem.features = { create: [...item.features] };
+  }
+  return createdItem;
+};

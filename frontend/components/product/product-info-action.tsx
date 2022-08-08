@@ -1,4 +1,4 @@
-import { useMutation } from "@apollo/client";
+import { FetchResult, useMutation } from "@apollo/client";
 import { useAuthContext } from "contexts/auth";
 import { useRouter } from "next/router";
 import { ADD_TO_CART } from "queries/mutations";
@@ -6,9 +6,13 @@ import styled from "styled-components";
 import { setContext } from "utils/helpers";
 import { useProductInfoContext } from "./product-info-context";
 import FullScreenLoading from "components/loading/full-screen";
+import { useCartContext } from "contexts/cart";
 
-const Action = () => {
+const Action: React.FC<{
+  serIsAddedToCart: React.Dispatch<React.SetStateAction<boolean>>;
+}> = ({ serIsAddedToCart }) => {
   const { token } = useAuthContext();
+  const { addItem } = useCartContext();
 
   const {
     state: { model, features },
@@ -17,7 +21,9 @@ const Action = () => {
   const router = useRouter();
   const productId = router.query.id;
 
-  const [addProductToCart, { loading }] = useMutation(ADD_TO_CART);
+  const [addProductToCart, { loading }] = useMutation<{
+    addItemToCart: { id: string; [key: string]: any };
+  }>(ADD_TO_CART);
 
   const handleClick = () => {
     const options: any = {
@@ -38,7 +44,10 @@ const Action = () => {
     }
 
     addProductToCart(options)
-      .then((data) => console.log(data))
+      .then((data) => {
+        addItem({ cartItemId: data.data?.addItemToCart.id as string });
+        serIsAddedToCart(true);
+      })
       .catch((error) => console.log(error));
   };
 

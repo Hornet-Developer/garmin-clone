@@ -6,7 +6,7 @@ const VerticalSliderItem: React.FC<{ url: string; selected: boolean }> = ({
   selected,
 }) => {
   return (
-    <Figure selected={selected ? selected.toString() : undefined}>
+    <Figure selected={selected ? "selected" : undefined}>
       <img src={url} className="w-full" />
     </Figure>
   );

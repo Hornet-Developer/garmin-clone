@@ -5,6 +5,7 @@ import theme from "utils/theme";
 import { ApolloProvider } from "@apollo/client";
 import client from "apollo-client";
 import Provider from "contexts";
+import { useMemo } from "react";
 
 if (typeof window === "object" && process.env.NODE_ENV === "development") {
   const { worker } = require("__mocks__/browser");
@@ -12,6 +13,13 @@ if (typeof window === "object" && process.env.NODE_ENV === "development") {
 }
 
 function MyApp({ Component, pageProps }: AppProps) {
+  const cartItemsId =
+    pageProps.cart?.cartItems.length > 0
+      ? pageProps.cart.cartItems.map(
+          (item: { id: string; [key: string]: any }) => ({ id: item.id })
+        )
+      : [];
+
   return (
     <ApolloProvider client={client}>
       <ThemeProvider theme={theme}>
@@ -21,6 +29,7 @@ function MyApp({ Component, pageProps }: AppProps) {
             token: pageProps.refreshToken,
             expires_in: pageProps.expires_in,
           }}
+          cartItemsId={cartItemsId || []}
         >
           <Component {...pageProps} />
         </Provider>

@@ -8,7 +8,10 @@ import Kicker from "./product-info-kicker";
 import ProductPrice from "./product-info-price";
 import Action from "./product-info-action";
 
-const ProductInfo: React.FC<{ product: ProductType }> = ({ product }) => {
+const ProductInfo: React.FC<{
+  product: ProductType;
+  serIsAddedToCart: React.Dispatch<React.SetStateAction<boolean>>;
+}> = ({ product, serIsAddedToCart }) => {
   const prices = Object.freeze({
     price: product.price,
     formattedPrice: product.formattedPrice,
@@ -22,9 +25,13 @@ const ProductInfo: React.FC<{ product: ProductType }> = ({ product }) => {
       <Header product={product} />
       <Kicker kickers={{ sale: product.sale, new: product.new }} />
       <ProductPrice prices={prices} />
-      {product.features && <Features features={product.features} />}
-      {product.models && <Models models={product.models} />}
-      <Action />
+      {product.features && product.features.length > 0 && (
+        <Features features={product.features} />
+      )}
+      {product.models && product.models.length > 0 && (
+        <Models models={product.models} />
+      )}
+      <Action serIsAddedToCart={serIsAddedToCart} />
     </div>
   );
 };

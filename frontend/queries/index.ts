@@ -165,3 +165,14 @@ export const SERIE_PRODUCT_PAGE = gql`
     }
   }
 `;
+
+export const INITIAL_CART = gql`
+  query Cart {
+    cart {
+      id
+      cartItems {
+        id
+      }
+    }
+  }
+`;

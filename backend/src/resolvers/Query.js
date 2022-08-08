@@ -158,6 +158,26 @@ function product(_, { id }, { prisma }) {
   });
 }
 
+async function cart(_, __, { prisma, userId, cookies }) {
+  if (userId) {
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    const cart = await prisma.cart.findUnique({
+      where: { id: user.cartId },
+      include: { cartItems: true },
+    });
+    return cart;
+  }
+
+  if (cookies?.cartId) {
+    return await prisma.cart.findUnique({
+      where: { id: cookies.cartId },
+      include: { cartItems: true },
+    });
+  }
+
+  return null;
+}
+
 const Query = {
   banners,
   featureds,
@@ -168,6 +188,7 @@ const Query = {
   products,
   productsByCategory,
   product,
+  cart,
 };
 
 export default Query;

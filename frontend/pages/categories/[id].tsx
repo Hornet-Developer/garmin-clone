@@ -4,6 +4,7 @@ import Layout from "components/layout";
 import type { GetServerSideProps, NextPage } from "next";
 import { CATEGORIES, CATEGORY, PRODUCTS_BY_CATEGORY } from "queries";
 import { CategoryType, ProductType } from "types";
+import { fetchInitialCart, fetchToken } from "utils/helpers";
 
 const CategoryPage: NextPage<{
   categories: CategoryType[];
@@ -20,7 +21,14 @@ const CategoryPage: NextPage<{
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+export const getServerSideProps: GetServerSideProps = async ({
+  params,
+  req,
+}) => {
+  const { refreshToken, user, expires_in } = await fetchToken(
+    req.headers.cookie
+  );
+
   const categoriesResponse = await client.query({
     query: CATEGORIES,
     variables: { hasSeries: false, hasCoverImgsList: false },
@@ -40,11 +48,17 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     variables: { categoryId: params?.id },
   });
 
+  const cartResponse = await fetchInitialCart(refreshToken);
+
   return {
     props: {
       category: categoryResponse.data.category,
       products: productsResponse.data.productsByCategory,
       categories: categoriesResponse.data.categories,
+      refreshToken,
+      user,
+      expires_in,
+      cart: cartResponse.data.cart,
     },
   };
 };

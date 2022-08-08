@@ -1,32 +1,19 @@
-import { useMemo } from "react";
 import { ProductType } from "types";
 import CarouselItem from "./carousel-item";
 import CarouselScroller from "./carousel-scroller";
 import ProductInfo from "./product-info";
-import { ProductInfoProvider } from "./product-info-context";
 
-const AppProduct: React.FC<{ product: ProductType }> = ({ product }) => {
-  const features = useMemo(
-    () =>
-      product.features?.map((feature) => ({
-        id: feature.id,
-        name: feature.name,
-        item: feature.items?.[0] as string,
-      })),
-    []
-  );
-
+const AppProduct: React.FC<{
+  product: ProductType;
+  serIsAddedToCart: React.Dispatch<React.SetStateAction<boolean>>;
+}> = ({ product, serIsAddedToCart }) => {
   return (
     <section className="relative flex flex-col lg:flex-row lg:pt-4 lg:max-w-[1280px] lg:mx-auto">
       <CarouselScroller imgList={product.imgList}>
         {product.imgList?.length &&
           product.imgList.map((url) => <CarouselItem key={url} url={url} />)}
       </CarouselScroller>
-      <ProductInfoProvider
-        initialState={{ model: product.models?.[0], features }}
-      >
-        <ProductInfo product={product} />
-      </ProductInfoProvider>
+      <ProductInfo product={product} serIsAddedToCart={serIsAddedToCart} />
     </section>
   );
 };

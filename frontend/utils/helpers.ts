@@ -1,5 +1,6 @@
 import client from "apollo-client";
 import { parse } from "cookie";
+import { INITIAL_CART } from "queries";
 import { REFRESH_TOKEN } from "queries/mutations";
 
 export async function fetchToken(cookie: string | undefined) {
@@ -34,3 +35,18 @@ export const setContext = (token: string | null) => ({
     Authorization: `Bearer ${token}`,
   },
 });
+
+export const fetchInitialCart = async (token: string | null | undefined) => {
+  return await client.query(
+    token
+      ? {
+          query: INITIAL_CART,
+          context: {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        }
+      : { query: INITIAL_CART }
+  );
+};

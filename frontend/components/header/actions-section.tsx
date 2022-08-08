@@ -4,10 +4,14 @@ import { BsQuestionCircle } from "react-icons/bs";
 import SearchBar from "./search-bar";
 import { useState } from "react";
 import AccountUtilBar from "./acount-utility-bar";
+import { useCartContext } from "contexts/cart";
 
 const ActionsSection = () => {
   const [isDisplay, toggleSearchBar] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const {
+    state: { count },
+  } = useCartContext();
 
   return (
     <div className="flex w-full justify-end flex-wrap lg:flex-nowrap lg:w-auto relative self-end lg:py-3 lg:mr-4 xl:mx-0">
@@ -32,7 +36,7 @@ const ActionsSection = () => {
               isDisplay ? "hidden" : ""
             }`}
           >
-            <span className="text-white text-xs">0</span>
+            <span className="text-white text-xs">{count}</span>
           </div>
         </div>
       </div>

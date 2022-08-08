@@ -1,15 +1,19 @@
 import client from "apollo-client";
 import Layout from "components/layout";
 import Product from "components/product";
+import AddedToCart from "components/product/added-to-cart";
+import { ProductInfoProvider } from "components/product/product-info-context";
 import type { GetServerSideProps, NextPage } from "next";
 import {
   CATEGORIES,
   CATEGORY_PRODUCT_PAGE,
+  INITIAL_CART,
   PRODUCT,
   SERIE_PRODUCT_PAGE,
 } from "queries";
+import { useMemo, useState } from "react";
 import { CategoryType, ProductType, SerieType } from "types";
-import { fetchToken } from "utils/helpers";
+import { fetchInitialCart, fetchToken } from "utils/helpers";
 
 const ProductPage: NextPage<{
   categories: CategoryType[];
@@ -17,12 +21,26 @@ const ProductPage: NextPage<{
   serie: SerieType;
   category: CategoryType;
 }> = ({ categories, product, serie, category }) => {
+  const features = useMemo(
+    () =>
+      product.features?.map((feature) => ({
+        id: feature.id,
+        name: feature.name,
+        item: feature.items?.[0] as string,
+      })),
+    []
+  );
+
   return (
     <Layout
       title={`${product.name} | Garmin International`}
       categories={categories}
     >
-      <Product category={category} product={product} serie={serie} />
+      <ProductInfoProvider
+        initialState={{ model: product.models?.[0], features }}
+      >
+        <Product category={category} product={product} serie={serie} />
+      </ProductInfoProvider>
     </Layout>
   );
 };
@@ -34,6 +52,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   const { refreshToken, user, expires_in } = await fetchToken(
     req.headers.cookie
   );
+
   const categoriesResponse = await client.query({
     query: CATEGORIES,
     variables: { hasSeries: false, hasCoverImgsList: false },
@@ -61,6 +80,8 @@ export const getServerSideProps: GetServerSideProps = async ({
     },
   });
 
+  const cartResponse = await fetchInitialCart(refreshToken);
+
   return {
     props: {
       categories: categoriesResponse.data.categories,
@@ -70,6 +91,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       refreshToken,
       user,
       expires_in,
+      cart: cartResponse.data.cart,
     },
   };
 };

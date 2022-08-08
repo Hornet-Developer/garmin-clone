@@ -74,7 +74,7 @@ model ChosenFeature {
   name       String
   item       String
   cartItem   CartItem? @relation(fields: [cartItemId], references: [id])
-  cartItemId String?   @db.ObjectId
+  cartItemId String[]  @db.ObjectId
 }
 
 model ProductFeature {
@@ -146,8 +146,6 @@ model Cart {
   expires                 DateTime?
   inSession               Boolean    @default(true)
   cartItems               CartItem[]
-  // user                    User?      @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
-  // userId                  String?    @unique @db.ObjectId
   user                    User?
   createdAt               DateTime   @default(now())
 }
@@ -162,7 +160,6 @@ model User {
   username  String?  @unique
   role      Role
   isActive  Boolean  @default(true)
-  // cart      Cart?
   cart      Cart?    @relation(fields: [cartId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   cartId    String?  @unique @db.ObjectId
   createdAt DateTime @default(now())

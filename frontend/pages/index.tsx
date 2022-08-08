@@ -7,7 +7,7 @@ import Pods from "components/pod";
 import type { GetServerSideProps, NextPage } from "next";
 import { BANNERS, CATEGORIES, FEATUREDS, PODS } from "queries";
 import { BannerType, CategoryType, FeaturedType, PodType } from "types";
-import { fetchToken } from "utils/helpers";
+import { fetchInitialCart, fetchToken } from "utils/helpers";
 
 const Home: NextPage<{
   categories?: CategoryType[];
@@ -48,6 +48,8 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
     query: PODS,
   });
 
+  const cartResponse = await fetchInitialCart(refreshToken);
+
   return {
     props: {
       categories: categoriesResponse.data.categories,
@@ -57,6 +59,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
       refreshToken,
       user,
       expires_in,
+      cart: cartResponse.data.cart,
     },
   };
 };

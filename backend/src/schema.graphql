@@ -32,6 +32,7 @@ type Query {
   productsByCategory(categoryId: String, serieId: String): [Product!]!
   product(id: String!): Product!
   serie(id: String!, hasProducts: Boolean!): Serie!
+  cart: Cart
 }
 
 type Mutation {
@@ -42,6 +43,10 @@ type Mutation {
 }
 
 # type Subscription {}
+
+type Count {
+  count: Int!
+}
 
 type AuthSession {
   user: Customer
