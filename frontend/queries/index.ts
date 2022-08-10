@@ -167,12 +167,66 @@ export const SERIE_PRODUCT_PAGE = gql`
 `;
 
 export const INITIAL_CART = gql`
-  query Cart {
-    cart {
+  query InitialCart($cartId: String!) {
+    initialCart(cartId: $cartId) {
       id
       cartItems {
         id
       }
+    }
+  }
+`;
+
+export const FULL_CART = gql`
+  query Cart($cartId: String) {
+    cart(cartId: $cartId) {
+      id
+      cartItems {
+        id
+        product {
+          id
+          name
+          partNumber
+          price
+          formattedPrice
+          imgList
+        }
+        quantity
+        model {
+          id
+          color
+          img
+        }
+        features {
+          id
+          name
+          item
+        }
+        createdAt
+      }
+      formattedSubtotal
+      formattedEstimatedTotal
+    }
+  }
+`;
+
+export const USER_SESSION = gql`
+  query FetchUserSession {
+    fetchUserSession {
+      user {
+        id
+        role
+        username
+        isActive
+        cart {
+          id
+          cartItems {
+            id
+          }
+        }
+      }
+      refresh_token
+      expires_in
     }
   }
 `;

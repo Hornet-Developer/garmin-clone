@@ -1,3 +1,5 @@
+import { useQuery } from "@apollo/client";
+import { INITIAL_CART } from "queries";
 import { useContext, useReducer } from "react";
 import { createContext } from "react";
 import { DispatchAction } from "types";
@@ -28,10 +30,18 @@ interface TContext {
   deleteItem: DispatchAction;
 }
 
-const initiateState = (cartItemsId: TCartItemsId[] | [], count: number) => ({
-  cartItemsId: cartItemsId || [],
-  count: count || 0,
-});
+const initiateState = (cartItems: TCartItemsId[] | [], count: number) => {
+  const cartItemsId =
+    cartItems.length > 0
+      ? cartItems.map((item: { id: string; [key: string]: any }) => ({
+          id: item.id,
+        }))
+      : [];
+  return {
+    cartItemsId,
+    count: count || 0,
+  };
+};
 
 const reducer = (state: TState, action: TActionType) => {
   const addItem = () => ({
@@ -66,14 +76,21 @@ const CartContext = createContext<TContext | undefined>(undefined);
 
 export const CartProvider = ({
   children,
-  cartItemsId,
+  cartId,
 }: {
   children: React.ReactNode;
-  cartItemsId: TCartItemsId[] | [];
+  cartId: string | null;
 }) => {
+  const { data } = useQuery(INITIAL_CART, {
+    variables: { cartId },
+  });
+
   const [state, dispatch] = useReducer(
     reducer,
-    initiateState(cartItemsId, cartItemsId.length || 0)
+    initiateState(
+      data?.initialCart?.cartItems || [],
+      data?.initialCart?.cartItems?.length || 0
+    )
   );
 
   const addItem = ({ cartItemId }: { cartItemId: string }) =>

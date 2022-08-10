@@ -61,7 +61,7 @@ export async function getUserId(userQuery, req, authToken) {
     const user = await userQuery.findUnique({
       where: { id: userId },
     });
-    return { userId, userRole: user.role };
+    return { userId, userRole: user.role, token };
   }
 
   return { userId: null, userRole: null };

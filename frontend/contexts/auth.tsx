@@ -1,7 +1,7 @@
 import { useMutation } from "@apollo/client";
 import { compareObjectIdCallback, useDeepMemo } from "hooks/useDeepMemo";
 import { REFRESH_TOKEN } from "queries/mutations";
-import { useCallback, useContext } from "react";
+import { useContext } from "react";
 import { createContext, useEffect, useRef, useState } from "react";
 import { UserType } from "types";
 import { setContext } from "utils/helpers";

@@ -71,6 +71,7 @@ async function main() {
         pubsub,
         userId: user ? user.userId : null,
         userRole: user ? user.userRole : null,
+        token: user ? user.token : null,
       };
     },
     plugins: [

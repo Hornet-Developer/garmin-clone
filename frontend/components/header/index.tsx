@@ -8,7 +8,7 @@ import Nav from "./nav";
 
 const Logo = () => (
   <Link href="/">
-    <div className="z-10 absolute top-0 w-[130px] h-12 cursor-pointer lg:w-[140px] lg:top-3 lg:w-[180px] xl:relative xl:top-0">
+    <div className="z-10 absolute top-0 w-[130px] h-12 cursor-pointer lg:top-3 lg:w-[180px] xl:relative xl:top-0">
       <Image src="/logo.svg" layout="fill" />
     </div>
   </Link>

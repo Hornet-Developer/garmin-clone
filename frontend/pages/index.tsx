@@ -4,17 +4,17 @@ import Categories from "components/categories-grid";
 import Featureds from "components/featured";
 import Layout from "components/layout";
 import Pods from "components/pod";
+import { parse } from "cookie";
 import type { GetServerSideProps, NextPage } from "next";
-import { BANNERS, CATEGORIES, FEATUREDS, PODS } from "queries";
+import { BANNERS, CATEGORIES, FEATUREDS, INITIAL_CART, PODS } from "queries";
 import { BannerType, CategoryType, FeaturedType, PodType } from "types";
-import { fetchInitialCart, fetchToken } from "utils/helpers";
+import { fetchCart, fetchToken } from "utils/helpers";
 
 const Home: NextPage<{
   categories?: CategoryType[];
   banners?: BannerType[];
   featureds?: FeaturedType[];
   pods?: PodType[];
-  loading: boolean;
 }> = ({ categories, banners, featureds, pods }) => {
   return (
     <Layout title="Garmin International | Home" categories={categories}>
@@ -27,9 +27,14 @@ const Home: NextPage<{
 };
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
-  const { refreshToken, user, expires_in } = await fetchToken(
-    req.headers.cookie
-  );
+  const cookies = parse(req.headers.cookie || "");
+  // let cart = null;
+
+  const { user } = await fetchToken(cookies.refresh_token);
+
+  // if (cookies.cartId && !user) {
+  //   cart = await fetchCart(cookies.cartId);
+  // }
 
   const categoriesResponse = await client.query({
     query: CATEGORIES,
@@ -48,18 +53,14 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
     query: PODS,
   });
 
-  const cartResponse = await fetchInitialCart(refreshToken);
-
   return {
     props: {
       categories: categoriesResponse.data.categories,
       banners: bannersResponse.data.banners,
       featureds: featuredsResponse.data.featureds,
       pods: podsResponse.data.pods,
-      refreshToken,
-      user,
-      expires_in,
-      cart: cartResponse.data.cart,
+      // cart: user?.cart || cart || null,
+      cartId: user?.cart.id || cookies.cartId || null,
     },
   };
 };

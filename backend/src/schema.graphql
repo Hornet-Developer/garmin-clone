@@ -32,7 +32,9 @@ type Query {
   productsByCategory(categoryId: String, serieId: String): [Product!]!
   product(id: String!): Product!
   serie(id: String!, hasProducts: Boolean!): Serie!
-  cart: Cart
+  cart(cartId: String): Cart
+  fetchUserSession: AuthSession!
+  initialCart(cartId: String!): Cart
 }
 
 type Mutation {
@@ -40,9 +42,15 @@ type Mutation {
   refreshToken: AuthSession
   logout: LogoutSession
   addItemToCart(cartId: String, item: CartItemInput): Cart
+  fetchOrcreateCart: Cart!
 }
 
 # type Subscription {}
+
+type CartWithMessage {
+  message: String
+  cart: Cart!
+}
 
 type Count {
   count: Int!

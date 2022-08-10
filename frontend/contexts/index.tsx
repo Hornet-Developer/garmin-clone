@@ -1,3 +1,4 @@
+import { CookiesProvider } from "react-cookie";
 import { mq } from "utils";
 import { AuthProvider, TAuthInfo } from "./auth";
 import { BreakpointProvider } from "./breakpoint";
@@ -8,17 +9,19 @@ import { ToggleNavProvider } from "./toggle-nav";
 const Provider = ({
   children,
   authInfo,
-  cartItemsId,
+  cartId,
 }: {
   children: React.ReactNode;
   authInfo: TAuthInfo;
-  cartItemsId: TCartItemsId[] | [];
+  cartId: string | null;
 }) => (
   <ToggleNavProvider>
     <BreakpointProvider queries={mq}>
       <AuthProvider authInfo={authInfo}>
         <SsrLoadingProvider>
-          <CartProvider cartItemsId={cartItemsId}>{children}</CartProvider>
+          <CookiesProvider>
+            <CartProvider cartId={cartId}>{children}</CartProvider>
+          </CookiesProvider>
         </SsrLoadingProvider>
       </AuthProvider>
     </BreakpointProvider>

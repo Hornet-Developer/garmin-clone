@@ -1,10 +1,11 @@
 import client from "apollo-client";
 import Category from "components/category/intex";
 import Layout from "components/layout";
+import { parse } from "cookie";
 import type { GetServerSideProps, NextPage } from "next";
 import { CATEGORIES, CATEGORY, PRODUCTS_BY_CATEGORY } from "queries";
 import { CategoryType, ProductType } from "types";
-import { fetchInitialCart, fetchToken } from "utils/helpers";
+import { fetchCart, fetchToken } from "utils/helpers";
 
 const CategoryPage: NextPage<{
   categories: CategoryType[];
@@ -25,9 +26,14 @@ export const getServerSideProps: GetServerSideProps = async ({
   params,
   req,
 }) => {
-  const { refreshToken, user, expires_in } = await fetchToken(
-    req.headers.cookie
-  );
+  const cookies = parse(req.headers.cookie || "");
+  let cart = null;
+
+  const { user } = await fetchToken(cookies.refresh_token);
+
+  if (cookies.cartId && !user) {
+    cart = await fetchCart(cookies.cartId);
+  }
 
   const categoriesResponse = await client.query({
     query: CATEGORIES,
@@ -48,17 +54,12 @@ export const getServerSideProps: GetServerSideProps = async ({
     variables: { categoryId: params?.id },
   });
 
-  const cartResponse = await fetchInitialCart(refreshToken);
-
   return {
     props: {
       category: categoryResponse.data.category,
       products: productsResponse.data.productsByCategory,
       categories: categoriesResponse.data.categories,
-      refreshToken,
-      user,
-      expires_in,
-      cart: cartResponse.data.cart,
+      cart: user?.cart || cart || null,
     },
   };
 };

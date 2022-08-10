@@ -47,3 +47,14 @@ export const ADD_TO_CART = gql`
     }
   }
 `;
+
+export const CREATE_CART = gql`
+  mutation FetchOrCreateCart {
+    fetchOrcreateCart {
+      id
+      cartItems {
+        id
+      }
+    }
+  }
+`;

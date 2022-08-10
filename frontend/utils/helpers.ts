@@ -1,32 +1,31 @@
 import client from "apollo-client";
 import { parse } from "cookie";
-import { INITIAL_CART } from "queries";
-import { REFRESH_TOKEN } from "queries/mutations";
+import { DocumentNode } from "graphql";
+import { INITIAL_CART, USER_SESSION } from "queries";
+import { CREATE_CART } from "queries/mutations";
 
-export async function fetchToken(cookie: string | undefined) {
-  const token = parse(cookie || "");
-
-  const refreshTokenResponse = token.refresh_token
-    ? await client.mutate({
-        mutation: REFRESH_TOKEN,
+export async function fetchToken(token: string | undefined) {
+  const fetchUserSession = token
+    ? await client.query({
+        query: USER_SESSION,
         context: {
           headers: {
-            Authorization: `Bearer ${token.refresh_token}`,
+            Authorization: `Bearer ${token}`,
           },
         },
       })
     : null;
 
   return {
-    refreshToken: refreshTokenResponse
-      ? refreshTokenResponse.data?.refreshToken.refresh_token
-      : refreshTokenResponse,
-    user: refreshTokenResponse
-      ? refreshTokenResponse.data?.refreshToken.user
-      : refreshTokenResponse,
-    expires_in: refreshTokenResponse
-      ? refreshTokenResponse.data?.refreshToken.expires_in
-      : refreshTokenResponse,
+    refreshToken: fetchUserSession
+      ? fetchUserSession.data?.fetchUserSession.refresh_token
+      : fetchUserSession,
+    user: fetchUserSession
+      ? fetchUserSession.data?.fetchUserSession.user
+      : fetchUserSession,
+    expires_in: fetchUserSession
+      ? fetchUserSession.data?.fetchUserSession.expires_in
+      : fetchUserSession,
   };
 }
 
@@ -36,17 +35,21 @@ export const setContext = (token: string | null) => ({
   },
 });
 
-export const fetchInitialCart = async (token: string | null | undefined) => {
-  return await client.query(
+export const fetchCart = async (cartId: string | null | undefined) => {
+  return await client.query({ query: INITIAL_CART, variables: { cartId } });
+};
+
+export const createCart = async (token: string | null | undefined) => {
+  return await client.mutate(
     token
       ? {
-          query: INITIAL_CART,
+          mutation: CREATE_CART,
           context: {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           },
         }
-      : { query: INITIAL_CART }
+      : { mutation: CREATE_CART }
   );
 };

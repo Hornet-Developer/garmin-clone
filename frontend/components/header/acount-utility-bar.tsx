@@ -57,19 +57,17 @@ const AccountUtilBar: React.FC<{
           Sign Out
         </div>
       ) : (
-        <Link href="/login">
-          <NavItem text="Sign In" pathname="/login" setIsOpen={setIsOpen} />
-        </Link>
+        <NavItem text="Sign In" pathname="/login" setIsOpen={setIsOpen} />
       )}
     </Container>
   );
 };
 
-const Container = styled.div.attrs({
-  className:
-    "absolute flex-col border-solid border-[1px] border-grey-300 bg-white z-10 top-full -left-6 font-roboto lg:left-16 lg:right-0 lg:py-4",
-})<{ isopen: string | undefined }>`
-  display: ${(props) => (props.isopen ? "flex" : "none")};
+const Container = styled.div.attrs<{ isopen: string | undefined }>((props) => ({
+  className: `${
+    props.isopen ? "flex" : "hidden"
+  } absolute flex-col border-solid border-[1px] border-grey-300 bg-white z-10 top-full -left-6 font-roboto lg:left-16 lg:right-0 lg:py-4`,
+}))<{ isopen: string | undefined }>`
   width: calc(100% + 3rem);
   font-size: 0.7rem;
   @media ${mq.lg} {

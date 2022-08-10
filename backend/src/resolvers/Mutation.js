@@ -81,16 +81,34 @@ function logout(_, __, { res }) {
   };
 }
 
-// async function createCart(_, __, { prisma, userId }) {
-//   const existCart = await prisma.cart.findUnique({ where: { userId } });
-//   if (existCart) return existCart;
-//   const newCart = await prisma.cart.create({
-//     data: {
-//       userId,
-//     },
-//   });
-//   return newCart;
-// }
+async function fetchOrcreateCart(_, __, { prisma, userId, res, cookies }) {
+  const guestCartId = cookies?.cartId;
+
+  if (userId) {
+    const user = await prisma.user.findUnique({ where: { userId } });
+    if (!user) throw new UserInputError(`${userId} is wrong input`);
+    const cart = await prisma.cart.findUnique({ where: { id: user.cartId } });
+    if (!cart)
+      throw new UserInputError(
+        `${user.name} with the id ${user.id} must has a cart`
+      );
+    return cart;
+  }
+
+  if (guestCartId) {
+    const cart = await prisma.cart.findUnique({ where: { id: guestCartId } });
+    if (!cart) throw new UserInputError(`${guestCartId} is wrong input`);
+    return cart;
+  }
+
+  const cart = await prisma.cart.create({
+    data: {},
+  });
+
+  res.cookie("cartId", cart.id);
+
+  return cart;
+}
 
 async function addItemToCart(_, { item }, { prisma, userId, res, cookies }) {
   const guestCartId = cookies?.cartId;
@@ -132,7 +150,7 @@ const Mutation = {
   login,
   refreshToken,
   logout,
-  // createCart,
+  fetchOrcreateCart,
   addItemToCart,
 };
 

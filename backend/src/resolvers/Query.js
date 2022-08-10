@@ -1,4 +1,5 @@
-import { UserInputError } from "apollo-server-core";
+import { ForbiddenError, UserInputError } from "apollo-server-core";
+import { getTokenPayload } from "../utils";
 
 function banners(_, __, { prisma }) {
   return prisma.banner.findMany();
@@ -158,24 +159,54 @@ function product(_, { id }, { prisma }) {
   });
 }
 
-async function cart(_, __, { prisma, userId, cookies }) {
+async function cart(_, { cartId }, { prisma, userId, cookies }) {
   if (userId) {
     const user = await prisma.user.findUnique({ where: { id: userId } });
-    const cart = await prisma.cart.findUnique({
-      where: { id: user.cartId },
+    if (!user.cartId !== cartId) throw new ForbiddenError("Forbidden Request");
+    return await prisma.cart.findUnique({
+      where: { id: cartId },
       include: { cartItems: true },
     });
-    return cart;
   }
 
   if (cookies?.cartId) {
+    if (cookies.cartId !== cartId)
+      throw new ForbiddenError("Forbidden Request");
     return await prisma.cart.findUnique({
-      where: { id: cookies.cartId },
+      where: { id: cartId },
       include: { cartItems: true },
     });
   }
 
-  return null;
+  throw new ForbiddenError("Forbidden Request");
+}
+
+async function initialCart(_, { cartId }, { prisma }) {
+  return await prisma.cart.findUnique({
+    where: { id: cartId },
+    include: { cartItems: true },
+  });
+}
+
+async function fetchUserSession(_, __, { prisma, userId, token }) {
+  if (!userId) {
+    return {
+      user: null,
+      refresh_token: null,
+      expires_in: null,
+    };
+  }
+
+  const user = await prisma.user.findUnique({ where: { id: userId } });
+  if (!user) throw new AuthenticationError(`user doesn't authenticated`);
+
+  const { expires_in } = getTokenPayload(token);
+
+  return {
+    user,
+    refresh_token: token,
+    expires_in,
+  };
 }
 
 const Query = {
@@ -189,6 +220,8 @@ const Query = {
   productsByCategory,
   product,
   cart,
+  fetchUserSession,
+  initialCart,
 };
 
 export default Query;

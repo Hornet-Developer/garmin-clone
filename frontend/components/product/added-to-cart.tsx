@@ -1,5 +1,9 @@
+import { useQuery } from "@apollo/client";
+import { useAuthContext } from "contexts/auth";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { INITIAL_CART } from "queries";
+import { useCookies } from "react-cookie";
 import { FaCheck } from "react-icons/fa";
 import styled from "styled-components";
 
@@ -10,6 +14,21 @@ const AddedToCart: React.FC<{
   modelName?: string;
 }> = ({ name, imgUrl, description, modelName }) => {
   const router = useRouter();
+  const { loggedUser, token } = useAuthContext();
+  const [cookies] = useCookies(["cartId"]);
+
+  const { data } = useQuery(INITIAL_CART, {
+    variables: { cartId: loggedUser?.cart?.id || cookies.cartId },
+    context: {
+      headers: token
+        ? {
+            Authorization: `Bearer ${token}`,
+          }
+        : {},
+    },
+  });
+
+  const cartId = data?.cart?.id;
 
   return (
     <div className="pt-12 pb-4 border-[1px] border-solid border-grey-300">
@@ -40,7 +59,7 @@ const AddedToCart: React.FC<{
               Continue Shopping
             </Button>
           </Link>
-          <Link href={`/products/${router.query.id}`}>
+          <Link href={`/cart/${cartId}`}>
             <Button className="bg-blue-100 border-[1px] border-solid border-blue-100 hover:bg-white">
               View Cart
             </Button>
