@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import { LOGIN } from "queries/mutations";
 import { useRef } from "react";
 import styled from "styled-components";
+import ErrorMessage from "./error-message";
 
 const Login = () => {
   const ref = useRef<HTMLInputElement | null>(null);
@@ -17,17 +18,16 @@ const Login = () => {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    async function loginFunction() {
-      const loginData = await login({
-        variables: { username: ref.current?.value },
-      });
-      await setToken(loginData.data.login?.refresh_token);
-      await setLoggedUser(loginData.data.login?.user);
-      await setQuantity(loginData.data.login?.totalQuantity);
-      await router.replace("/");
-    }
-
-    loginFunction();
+    login({
+      variables: { username: ref.current?.value },
+    })
+      .then((response) => {
+        setToken(response.data.login?.refresh_token);
+        setLoggedUser(response.data.login?.user);
+        setQuantity(response.data.login?.totalQuantity);
+        router.replace("/");
+      })
+      .catch(() => {});
   };
 
   return (
@@ -45,6 +45,7 @@ const Login = () => {
           className="p-4 pb-0 w-full h-[309.141px]"
           onSubmit={(event) => handleSubmit(event)}
         >
+          {error && <ErrorMessage message={error.message} />}
           <div className="w-full mb-6">
             <label className="text-[0.9rem] tracking-black block mb-1">
               username
@@ -53,6 +54,7 @@ const Login = () => {
               type="text"
               className="border-solid border-[1px] border-grey-300 w-full h-10 focus:border-[2px] focus:outline-0 pl-4 text-sm"
               ref={ref}
+              // onFocus={() => {}}
             />
           </div>
           <input

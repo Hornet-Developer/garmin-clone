@@ -47,7 +47,7 @@ const Cart: React.FC<{ cartItem: CartItemType; refetch: TRefreshQuery }> = ({
               className="w-full"
             />
           </div>
-          <div className="text-start">
+          <div className="text-start max-w-xl lg:max-w-sm">
             <h2 className="text-2xl tracking-wide font-medium my-2">{`${
               cartItem.product.name
             }${cartItem?.model ? ", " + cartItem?.model?.color : ""}`}</h2>

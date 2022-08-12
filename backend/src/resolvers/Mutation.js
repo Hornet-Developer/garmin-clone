@@ -238,7 +238,6 @@ async function deletecartItem(_, { itemId }, { prisma, cookies, cartId }) {
   const cart = await prisma.cart.findUnique({
     where: { id: cartId || cookies?.cartId },
   });
-  console.log(deletedItem.quantity);
 
   const deletedItemPrice = currency(deletedItem.product.price).multiply(
     deletedItem.quantity

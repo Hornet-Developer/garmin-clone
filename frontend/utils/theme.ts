@@ -5,6 +5,7 @@ const theme: DefaultTheme = {
   colors: {
     white: colors.white,
     black: colors.black,
+    danger: "#e00",
     grey: {
       50: colors.neutral["50"],
       100: colors.neutral["100"],
