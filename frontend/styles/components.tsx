@@ -1,8 +1,10 @@
 import styled from "styled-components";
 
-export const DropDown = styled.select.attrs({
-  className: "w-full h-auto bg-white rounded-none font-roboto text-[0.9rem]",
-})`
+export const DropDown = styled.select.attrs<{ className?: string }>(
+  (props) => ({
+    className: `w-full h-auto bg-white rounded-none font-roboto text-[0.9rem] ${props.className}`,
+  })
+)<{ className?: string }>`
   border: 1px solid ${(props) => props.theme.colors.grey["300"]};
   -moz-appearance: none;
   -webkit-appearance: none;

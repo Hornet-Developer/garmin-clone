@@ -35,17 +35,30 @@ type Query {
   cart(cartId: String): Cart
   fetchUserSession: AuthSession!
   initialCart(cartId: String!): Cart
+  cartItemsCount(cartId: String!): Count!
 }
 
 type Mutation {
-  login(username: String!): AuthSession
-  refreshToken: AuthSession
+  login(username: String!): AuthSession!
+  refreshToken: AuthSession!
   logout: LogoutSession
-  addItemToCart(cartId: String, item: CartItemInput): Cart
+  addItemToCart(cartId: String, item: CartItemInput, price: Float!): Cart
   fetchOrcreateCart: Cart!
+  updateCart(cartId: String!, item: ItemInput!): Cart!
+  deletecartItem(itemId: String!): DeleteItemCart!
 }
 
 # type Subscription {}
+
+type DeleteItemCart {
+  quantity: Int!
+}
+
+input ItemInput {
+  itemId: String!
+  price: Float!
+  quantity: Int!
+}
 
 type CartWithMessage {
   message: String
@@ -58,6 +71,7 @@ type Count {
 
 type AuthSession {
   user: Customer
+  totalQuantity: Int!
   refresh_token: String
   expires_in: String
 }
@@ -240,6 +254,7 @@ type Customer {
   username: String!
   role: Role!
   isActive: Boolean!
+  cartId: String!
   cart: Cart!
   createdAt: Date!
 }

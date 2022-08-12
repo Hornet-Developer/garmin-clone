@@ -72,6 +72,7 @@ async function main() {
         userId: user ? user.userId : null,
         userRole: user ? user.userRole : null,
         token: user ? user.token : null,
+        cartId: user ? user.cartId : null,
       };
     },
     plugins: [

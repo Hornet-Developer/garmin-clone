@@ -159,10 +159,13 @@ function product(_, { id }, { prisma }) {
   });
 }
 
-async function cart(_, { cartId }, { prisma, userId, cookies }) {
+async function cart(
+  _,
+  { cartId },
+  { prisma, userId, cookies, cartId: authedCartId }
+) {
   if (userId) {
-    const user = await prisma.user.findUnique({ where: { id: userId } });
-    if (!user.cartId !== cartId) throw new ForbiddenError("Forbidden Request");
+    if (cartId !== authedCartId) throw new ForbiddenError("Forbidden Request");
     return await prisma.cart.findUnique({
       where: { id: cartId },
       include: { cartItems: true },
@@ -174,7 +177,15 @@ async function cart(_, { cartId }, { prisma, userId, cookies }) {
       throw new ForbiddenError("Forbidden Request");
     return await prisma.cart.findUnique({
       where: { id: cartId },
-      include: { cartItems: true },
+      include: {
+        cartItems: {
+          include: {
+            product: true,
+            model: true,
+            features: true,
+          },
+        },
+      },
     });
   }
 
@@ -197,16 +208,38 @@ async function fetchUserSession(_, __, { prisma, userId, token }) {
     };
   }
 
-  const user = await prisma.user.findUnique({ where: { id: userId } });
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    include: { cart: { include: { cartItems: true } } },
+  });
   if (!user) throw new AuthenticationError(`user doesn't authenticated`);
 
-  const { expires_in } = getTokenPayload(token);
+  const payload = getTokenPayload(token);
 
   return {
     user,
     refresh_token: token,
-    expires_in,
+    expires_in: payload.exp,
   };
+}
+
+async function cartItemsCount(_, { cartId }, { prisma }) {
+  if (!cartId) return { count: 0 };
+
+  const cart = await prisma.cart.findUnique({
+    where: { id: cartId },
+    include: { cartItems: true },
+  });
+
+  const count =
+    cart?.cartItems.length > 0
+      ? cart.cartItems.reduce((acc, item) => {
+          acc += item.quantity;
+          return acc;
+        }, 0)
+      : 0;
+
+  return { count };
 }
 
 const Query = {
@@ -222,6 +255,7 @@ const Query = {
   cart,
   fetchUserSession,
   initialCart,
+  cartItemsCount,
 };
 
 export default Query;

@@ -1,18 +1,18 @@
-import { FetchResult, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import { useAuthContext } from "contexts/auth";
 import { useRouter } from "next/router";
 import { ADD_TO_CART } from "queries/mutations";
 import styled from "styled-components";
-import { setContext } from "utils/helpers";
 import { useProductInfoContext } from "./product-info-context";
 import FullScreenLoading from "components/loading/full-screen";
-import { useCartContext } from "contexts/cart";
+import { useCartItemsCountContext } from "contexts/cartItemsCount";
 
 const Action: React.FC<{
   serIsAddedToCart: React.Dispatch<React.SetStateAction<boolean>>;
-}> = ({ serIsAddedToCart }) => {
+  price: number;
+}> = ({ serIsAddedToCart, price }) => {
   const { token } = useAuthContext();
-  const { addItem } = useCartContext();
+  const { addItem } = useCartItemsCountContext();
 
   const {
     state: { model, features },
@@ -26,8 +26,9 @@ const Action: React.FC<{
   }>(ADD_TO_CART);
 
   const handleClick = () => {
-    const options: any = {
+    addProductToCart({
       variables: {
+        price,
         item: {
           productId,
           modelId: model?.id,
@@ -37,15 +38,12 @@ const Action: React.FC<{
           })),
         },
       },
-    };
-
-    if (token) {
-      options.context = setContext(token);
-    }
-
-    addProductToCart(options)
-      .then((data) => {
-        addItem({ cartItemId: data.data?.addItemToCart.id as string });
+      context: {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      },
+    })
+      .then(() => {
+        addItem();
         serIsAddedToCart(true);
       })
       .catch((error) => console.log(error));

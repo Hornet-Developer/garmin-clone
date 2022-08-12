@@ -12,7 +12,7 @@ import {
 } from "queries";
 import { useMemo } from "react";
 import { CategoryType, ProductType, SerieType } from "types";
-import { fetchCart, fetchToken } from "utils/helpers";
+import { fetchCartItemsCountResponse, fetchToken } from "utils/helpers";
 
 const ProductPage: NextPage<{
   categories: CategoryType[];
@@ -49,13 +49,15 @@ export const getServerSideProps: GetServerSideProps = async ({
   req,
 }) => {
   const cookies = parse(req.headers.cookie || "");
-  let cart = null;
 
-  const { user } = await fetchToken(cookies.refresh_token);
+  const { refreshToken, user, expires_in } = await fetchToken(
+    cookies.refresh_token
+  );
 
-  if (cookies.cartId && !user) {
-    cart = await fetchCart(cookies.cartId);
-  }
+  const cartItemsCountResponse = await fetchCartItemsCountResponse(
+    cookies.cartId,
+    user
+  );
 
   const categoriesResponse = await client.query({
     query: CATEGORIES,
@@ -90,7 +92,13 @@ export const getServerSideProps: GetServerSideProps = async ({
       product: productResponse.data.product,
       serie: serieResponse.data.serie,
       category: categoryResponse.data.category,
-      cart: user?.cart || cart || null,
+      refreshToken,
+      user,
+      expires_in,
+      initialCount:
+        cartItemsCountResponse !== 0
+          ? cartItemsCountResponse.data.cartItemsCount.count
+          : cartItemsCountResponse,
     },
   };
 };

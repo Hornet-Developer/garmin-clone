@@ -1,14 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
+import { fetchToken } from "utils/helpers";
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const token = request.cookies.get("refresh_token");
-  if (!token && request.nextUrl.pathname !== "/auth") {
-    return NextResponse.redirect(new URL("/auth", request.url));
-  } else if (token && request.nextUrl.pathname === "/auth") {
+  const authedSession = token ? await fetchToken(token) : undefined;
+  console.log(authedSession);
+  if (authedSession?.refreshToken) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 }
 
 export const config = {
-  matcher: ["/auth"],
+  matcher: ["/login"],
 };

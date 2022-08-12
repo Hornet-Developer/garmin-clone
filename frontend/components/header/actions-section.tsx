@@ -4,39 +4,39 @@ import { BsQuestionCircle } from "react-icons/bs";
 import SearchBar from "./search-bar";
 import { useState } from "react";
 import AccountUtilBar from "./acount-utility-bar";
-import { useCartContext } from "contexts/cart";
-import Link from "next/link";
 import { memo } from "react";
 import { useMutation } from "@apollo/client";
 import { CREATE_CART } from "queries/mutations";
 import { useAuthContext } from "contexts/auth";
 import { useRouter } from "next/router";
 import FullScreenLoading from "components/loading/full-screen";
+import { useCartItemsCountContext } from "contexts/cartItemsCount";
 
-const ActionsSection = memo(({ cartId }: { cartId?: string }) => {
+const ActionsSection = memo(() => {
   const [isDisplay, toggleSearchBar] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const {
-    state: { count },
-  } = useCartContext();
-  const { loggedUser } = useAuthContext();
+  const { loggedUser, token } = useAuthContext();
   const router = useRouter();
+  const { cartItemsCount } = useCartItemsCountContext();
 
-  const [fetchOrcreateCart, { loading }] = useMutation(CREATE_CART);
+  const [fetchOrcreateCart, { loading: createCartLoaing }] =
+    useMutation(CREATE_CART);
 
   const handleCartClick = () => {
     if (loggedUser) {
-      router.push(`/cart/${loggedUser.cart.id}`);
+      if (loggedUser?.cartId) router.push(`/cart/${loggedUser.cartId}`);
       return;
     }
-    fetchOrcreateCart().then((data) => {
+    fetchOrcreateCart({
+      context: { headers: token ? { Authorization: `Bearer ${token}` } : {} },
+    }).then((data) => {
       router.push(`/cart/${data.data.fetchOrcreateCart.id}`);
     });
   };
 
   return (
     <div className="flex w-full justify-end flex-wrap lg:flex-nowrap lg:w-auto relative self-end lg:py-3 lg:mr-4 xl:mx-0">
-      {loading && <FullScreenLoading />}
+      {createCartLoaing && <FullScreenLoading />}
       <div className="hidden cursor-pointer lg:flex items-center justify-start h-12 pr-6">
         <div className="flex items-center gap-2">
           <BsQuestionCircle size="1.1rem" />
@@ -58,7 +58,7 @@ const ActionsSection = memo(({ cartId }: { cartId?: string }) => {
               isDisplay ? "hidden" : ""
             }`}
           >
-            <span className="text-white text-xs">{count}</span>
+            <span className="text-white text-xs">{cartItemsCount}</span>
           </div>
         </div>
       </div>

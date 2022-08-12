@@ -17,8 +17,8 @@ const AddedToCart: React.FC<{
   const { loggedUser, token } = useAuthContext();
   const [cookies] = useCookies(["cartId"]);
 
-  const { data } = useQuery(INITIAL_CART, {
-    variables: { cartId: loggedUser?.cart?.id || cookies.cartId },
+  const { data, error } = useQuery(INITIAL_CART, {
+    variables: { cartId: loggedUser?.cartId || cookies.cartId },
     context: {
       headers: token
         ? {
@@ -28,7 +28,7 @@ const AddedToCart: React.FC<{
     },
   });
 
-  const cartId = data?.cart?.id;
+  const cartId = data?.initialCart?.id || cookies?.cartId;
 
   return (
     <div className="pt-12 pb-4 border-[1px] border-solid border-grey-300">
@@ -45,7 +45,7 @@ const AddedToCart: React.FC<{
                   <FaCheck size={20} className="mr-2.5" />
                   <h2>Added To Cart</h2>
                 </div>
-                <div className="ml-8 font-opensans text-sm font-thin tracking-wider">
+                <div className="ml-8 font-opensans text-sm font-thin tracking-wider md:max-w-xs laptop:max-w-md lg:max-w-lg">
                   {name} {description && `- ${description}`}
                   {modelName && `, ${modelName}`}
                 </div>

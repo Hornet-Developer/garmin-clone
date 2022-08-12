@@ -114,6 +114,7 @@ export interface UserType {
   isActive: string;
   role: Role;
   cart: CartType;
+  cartId: string;
   createdAt?: Date;
 }
 

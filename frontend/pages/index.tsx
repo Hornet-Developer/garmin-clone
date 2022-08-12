@@ -6,9 +6,9 @@ import Layout from "components/layout";
 import Pods from "components/pod";
 import { parse } from "cookie";
 import type { GetServerSideProps, NextPage } from "next";
-import { BANNERS, CATEGORIES, FEATUREDS, INITIAL_CART, PODS } from "queries";
+import { BANNERS, CATEGORIES, FEATUREDS, PODS } from "queries";
 import { BannerType, CategoryType, FeaturedType, PodType } from "types";
-import { fetchCart, fetchToken } from "utils/helpers";
+import { fetchCartItemsCountResponse, fetchToken } from "utils/helpers";
 
 const Home: NextPage<{
   categories?: CategoryType[];
@@ -28,13 +28,15 @@ const Home: NextPage<{
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
   const cookies = parse(req.headers.cookie || "");
-  // let cart = null;
 
-  const { user } = await fetchToken(cookies.refresh_token);
+  const { user, refreshToken, expires_in } = await fetchToken(
+    cookies.refresh_token
+  );
 
-  // if (cookies.cartId && !user) {
-  //   cart = await fetchCart(cookies.cartId);
-  // }
+  const cartItemsCountResponse = await fetchCartItemsCountResponse(
+    cookies.cartId,
+    user
+  );
 
   const categoriesResponse = await client.query({
     query: CATEGORIES,
@@ -59,8 +61,13 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
       banners: bannersResponse.data.banners,
       featureds: featuredsResponse.data.featureds,
       pods: podsResponse.data.pods,
-      // cart: user?.cart || cart || null,
-      cartId: user?.cart.id || cookies.cartId || null,
+      refreshToken,
+      user,
+      expires_in,
+      initialCount:
+        cartItemsCountResponse !== 0
+          ? cartItemsCountResponse.data.cartItemsCount.count
+          : cartItemsCountResponse,
     },
   };
 };

@@ -1,5 +1,5 @@
 import { compareObjectProps } from "hooks/useDeepMemo";
-import { memo } from "react";
+import { memo, useMemo } from "react";
 import { ProductType } from "types";
 import Features from "./product-info-features";
 import Models from "./product-info-models";
@@ -12,14 +12,26 @@ const ProductInfo: React.FC<{
   product: ProductType;
   serIsAddedToCart: React.Dispatch<React.SetStateAction<boolean>>;
 }> = ({ product, serIsAddedToCart }) => {
-  const prices = Object.freeze({
-    price: product.price,
-    formattedPrice: product.formattedPrice,
-    oldPrice: product.oldPrice,
-    formattedOldPrice: product.formattedOldPrice,
-    interestFree: product.interestFree,
-    formattedInterestFree: product.formattedInterestFree,
-  });
+  const prices = useMemo(
+    () =>
+      Object.freeze({
+        price: product.price,
+        formattedPrice: product.formattedPrice,
+        oldPrice: product.oldPrice,
+        formattedOldPrice: product.formattedOldPrice,
+        interestFree: product.interestFree,
+        formattedInterestFree: product.formattedInterestFree,
+      }),
+    [
+      product.price,
+      product.formattedPrice,
+      product.oldPrice,
+      product.formattedOldPrice,
+      product.interestFree,
+      product.formattedInterestFree,
+    ]
+  );
+
   return (
     <div className="m-4 lg:px-12">
       <Header product={product} />
@@ -31,7 +43,10 @@ const ProductInfo: React.FC<{
       {product.models && product.models.length > 0 && (
         <Models models={product.models} />
       )}
-      <Action serIsAddedToCart={serIsAddedToCart} />
+      <Action
+        serIsAddedToCart={serIsAddedToCart}
+        price={product.price as number}
+      />
     </div>
   );
 };

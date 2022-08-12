@@ -1,6 +1,8 @@
 import { useMutation } from "@apollo/client";
 import { useAuthContext } from "contexts/auth";
+import { useCartItemsCountContext } from "contexts/cartItemsCount";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { LOGOUT } from "queries/mutations";
 import styled from "styled-components";
 import { mq } from "utils";
@@ -14,12 +16,14 @@ const NavItem = ({
   pathname: string;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) => (
-  <div
-    className="text-start px-4 py-2 active:bg-grey-200"
-    onClick={() => setIsOpen(false)}
-  >
-    <Link href={pathname}>{text}</Link>
-  </div>
+  <Link href={pathname}>
+    <div
+      className="text-start px-4 py-2 active:bg-grey-200"
+      onClick={() => setIsOpen(false)}
+    >
+      {text}
+    </div>
+  </Link>
 );
 
 const AccountUtilBar: React.FC<{
@@ -28,12 +32,16 @@ const AccountUtilBar: React.FC<{
 }> = ({ isOpen, setIsOpen }) => {
   const { setLoggedUser, setToken, token } = useAuthContext();
   const [logout] = useMutation(LOGOUT);
+  const { reset } = useCartItemsCountContext();
+  const router = useRouter();
 
   const handleLogout = () => {
     logout().then(() => {
       setToken(null);
       setLoggedUser(null);
       setIsOpen(false);
+      reset();
+      router.replace("/");
     });
   };
 

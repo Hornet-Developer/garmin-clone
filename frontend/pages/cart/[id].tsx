@@ -1,4 +1,4 @@
-import { useQuery } from "@apollo/client";
+import { ApolloQueryResult, NetworkStatus, useQuery } from "@apollo/client";
 import client from "apollo-client";
 import Cart from "components/cart";
 import CartEmpty from "components/cart/cart-empty";
@@ -12,7 +12,15 @@ import { useRouter } from "next/router";
 import { CATEGORIES, FULL_CART } from "queries";
 import { Fragment } from "react";
 import { CategoryType } from "types";
-import { fetchCart, fetchToken } from "utils/helpers";
+import { fetchCartItemsCountResponse, fetchToken } from "utils/helpers";
+
+export type TRefreshQuery = (
+  variables?:
+    | Partial<{
+        cartId: string | string[] | undefined;
+      }>
+    | undefined
+) => Promise<ApolloQueryResult<any>>;
 
 const CartPage: NextPage<{
   categories: CategoryType[];
@@ -21,8 +29,10 @@ const CartPage: NextPage<{
   const { token } = useAuthContext();
   const router = useRouter();
 
-  const { data, error, loading } = useQuery(FULL_CART, {
+  const { data, error, loading, refetch, networkStatus } = useQuery(FULL_CART, {
+    fetchPolicy: "network-only",
     variables: { cartId: router.query.id },
+    notifyOnNetworkStatusChange: true,
     context: {
       headers: token
         ? {
@@ -34,7 +44,7 @@ const CartPage: NextPage<{
 
   return (
     <Layout title={`Garmin International | Cart`} categories={categories}>
-      {loading ? (
+      {loading || networkStatus === NetworkStatus.refetch ? (
         <ContainerLoading />
       ) : (
         <PrivateRoute
@@ -48,6 +58,7 @@ const CartPage: NextPage<{
               cartItems={data?.cart?.cartItems}
               formattedSubtotal={data?.cart?.formattedSubtotal}
               formattedEstimatedTotal={data?.cart?.formattedEstimatedTotal}
+              refetch={refetch}
             />
           ) : (
             <Fragment>
@@ -67,20 +78,28 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
   });
 
   const cookies = parse(req.headers.cookie || "");
-  let cart = null;
 
-  const { user } = await fetchToken(cookies.refresh_token);
+  const { user, refreshToken, expires_in } = await fetchToken(
+    cookies.refresh_token
+  );
 
-  if (cookies.cartId && !user) {
-    cart = await fetchCart(cookies.cartId);
-  }
+  const cartItemsCountResponse = await fetchCartItemsCountResponse(
+    cookies.cartId,
+    user
+  );
 
   return {
     props: {
       categories: categoriesResponse.data.categories,
       cartIdcookie:
         Object.keys(cookies).length > 0 ? cookies.cartId || null : null,
-      cart: user?.cart || cart || null,
+      user,
+      refreshToken,
+      expires_in,
+      initialCount:
+        cartItemsCountResponse !== 0
+          ? cartItemsCountResponse.data.cartItemsCount.count
+          : cartItemsCountResponse,
     },
   };
 };

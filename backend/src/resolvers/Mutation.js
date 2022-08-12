@@ -1,5 +1,6 @@
-import { AuthenticationError } from "apollo-server-core";
-import { cartItem, signToken, updateCart } from "../utils";
+import { AuthenticationError, ForbiddenError } from "apollo-server-core";
+import { cartItem, signToken, updateCartItems } from "../utils";
+import currency from "currency.js";
 
 async function login(_, { username }, { prisma, res, cookies }) {
   const user = await prisma.user.findUnique({ where: { username } });
@@ -15,6 +16,16 @@ async function login(_, { username }, { prisma, res, cookies }) {
     maxAge: expires_in,
   });
 
+  const authedCart = await prisma.cart.findUnique({
+    where: { id: user.cartId },
+    include: { cartItems: true },
+  });
+
+  let totalQuantity = authedCart.cartItems.reduce((acc, item) => {
+    acc += item.quantity;
+    return acc;
+  }, 0);
+
   if (cookies?.cartId) {
     const guestCart = await prisma.cart.findUnique({
       where: { id: cookies.cartId },
@@ -23,14 +34,29 @@ async function login(_, { username }, { prisma, res, cookies }) {
 
     const cartItemIds = guestCart.cartItems?.map((item) => ({ id: item.id }));
 
+    totalQuantity += guestCart.cartItems.reduce((acc, item) => {
+      acc += item.quantity;
+      return acc;
+    }, 0);
+
+    const totalPrice = currency(guestCart.subtotal).add(authedCart.subtotal);
+
     await prisma.cart.update({
       where: { id: guestCart.id },
-      data: { cartItems: { disconnect: cartItemIds } },
+      data: {
+        cartItems: { disconnect: cartItemIds },
+      },
     });
 
     await prisma.cart.update({
       where: { id: user.cartId },
-      data: { cartItems: { connect: cartItemIds } },
+      data: {
+        subtotal: totalPrice.value,
+        formattedSubtotal: `$${totalPrice.value} USD`,
+        estimatedTotal: totalPrice.value,
+        formattedEstimatedTotal: `$${totalPrice.value} USD`,
+        cartItems: { connect: cartItemIds },
+      },
     });
 
     await prisma.cart.delete({ where: { id: guestCart.id } });
@@ -40,6 +66,7 @@ async function login(_, { username }, { prisma, res, cookies }) {
 
   return {
     user,
+    totalQuantity,
     refresh_token,
     expires_in,
   };
@@ -81,13 +108,15 @@ function logout(_, __, { res }) {
   };
 }
 
-async function fetchOrcreateCart(_, __, { prisma, userId, res, cookies }) {
+async function fetchOrcreateCart(
+  _,
+  __,
+  { prisma, userId, res, cookies, cartId }
+) {
   const guestCartId = cookies?.cartId;
 
   if (userId) {
-    const user = await prisma.user.findUnique({ where: { userId } });
-    if (!user) throw new UserInputError(`${userId} is wrong input`);
-    const cart = await prisma.cart.findUnique({ where: { id: user.cartId } });
+    const cart = await prisma.cart.findUnique({ where: { id: cartId } });
     if (!cart)
       throw new UserInputError(
         `${user.name} with the id ${user.id} must has a cart`
@@ -110,38 +139,124 @@ async function fetchOrcreateCart(_, __, { prisma, userId, res, cookies }) {
   return cart;
 }
 
-async function addItemToCart(_, { item }, { prisma, userId, res, cookies }) {
+async function addItemToCart(
+  _,
+  { item, price },
+  { prisma, userId, res, cookies, cartId }
+) {
   const guestCartId = cookies?.cartId;
 
-  if (userId) {
-    const user = await prisma.user.findUnique({ where: { id: userId } });
-    if (!user) throw new UserInputError(`${userId} doesn't exist`);
-    return updateCart({
-      id: user.cartId,
-      item: cartItem(item),
-      cartQueryUpdate: prisma.cart.update,
+  if (!guestCartId && !userId) {
+    const cart = await prisma.cart.create({
+      data: {
+        subtotal: price,
+        formattedSubtotal: `$${price} USD`,
+        estimatedTotal: price,
+        formattedEstimatedTotal: `$${price} USD`,
+        cartItems: {
+          create: [cartItem(item)],
+        },
+      },
     });
+
+    res.cookie("cartId", cart.id);
+
+    return cart;
   }
 
-  if (guestCartId) {
-    return updateCart({
-      id: guestCartId,
-      item: cartItem(item),
-      cartQueryUpdate: prisma.cart.update,
-    });
-  }
+  const cart = await prisma.cart.findUnique({
+    where: { id: cartId || guestCartId },
+  });
 
-  const cart = await prisma.cart.create({
+  const totalPrice = currency(cart.subtotal).add(currency(price));
+
+  return prisma.cart.update({
+    where: { id: cartId || guestCartId },
     data: {
+      subtotal: totalPrice.value,
+      formattedSubtotal: `$${totalPrice.value} USD`,
+      estimatedTotal: totalPrice.value,
+      formattedEstimatedTotal: `$${totalPrice.value} USD`,
       cartItems: {
         create: [cartItem(item)],
       },
     },
   });
+}
 
-  res.cookie("cartId", cart.id);
+async function updateCart(_, { cartId, item }, { prisma, cookies, userId }) {
+  if (!userId && !cookies?.cartId)
+    throw new ForbiddenError("Forbidden Request");
 
-  return cart;
+  const cart = await prisma.cart.findUnique({
+    where: { id: cartId },
+    include: { cartItems: { include: { product: true } } },
+  });
+
+  let totalPrice =
+    cart.cartItems.length > 1
+      ? cart.cartItems
+          .filter((cartItem) => cartItem.id !== item.itemId)
+          .reduce(
+            (acc, item) =>
+              currency(acc).add(
+                currency(item.product.price).multiply(item.quantity)
+              ),
+            0
+          )
+      : { value: 0 };
+
+  totalPrice = currency(totalPrice.value).add(
+    currency(item.price).multiply(item.quantity)
+  );
+
+  return prisma.cart.update({
+    where: { id: cartId },
+    data: {
+      subtotal: totalPrice.value,
+      formattedSubtotal: `$${totalPrice.value} USD`,
+      estimatedTotal: totalPrice.value,
+      formattedEstimatedTotal: `$${totalPrice.value} USD`,
+      cartItems: {
+        update: {
+          where: { id: item.itemId },
+          data: {
+            quantity: item.quantity,
+          },
+        },
+      },
+    },
+  });
+}
+
+async function deletecartItem(_, { itemId }, { prisma, cookies, cartId }) {
+  const deletedItem = await prisma.cartItem.delete({
+    where: { id: itemId },
+    include: { product: true },
+  });
+
+  const cart = await prisma.cart.findUnique({
+    where: { id: cartId || cookies?.cartId },
+  });
+  console.log(deletedItem.quantity);
+
+  const deletedItemPrice = currency(deletedItem.product.price).multiply(
+    deletedItem.quantity
+  );
+
+  const totalPrice = currency(cart.subtotal).subtract(deletedItemPrice.value);
+
+  await prisma.cart.update({
+    where: { id: cart.id },
+    data: {
+      subtotal: totalPrice.value,
+      formattedSubtotal: `$${totalPrice.value} USD`,
+      estimatedTotal: totalPrice.value,
+      formattedEstimatedTotal: `$${totalPrice.value} USD`,
+    },
+  });
+
+  return { quantity: deletedItem.quantity };
 }
 
 // function createOrder(_, { products }, { prisma, res }) {}
@@ -152,6 +267,8 @@ const Mutation = {
   logout,
   fetchOrcreateCart,
   addItemToCart,
+  updateCart,
+  deletecartItem,
 };
 
 export default Mutation;

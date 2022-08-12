@@ -5,7 +5,7 @@ import { parse } from "cookie";
 import { GetServerSideProps, NextPage } from "next";
 import { CATEGORIES } from "queries";
 import { CategoryType } from "types";
-import { fetchCart, fetchToken } from "utils/helpers";
+import { fetchCartItemsCountResponse } from "utils/helpers";
 
 const LoginPage: NextPage<{
   categories?: CategoryType[];
@@ -19,13 +19,10 @@ const LoginPage: NextPage<{
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
   const cookies = parse(req.headers.cookie || "");
-  let cart = null;
 
-  const { user } = await fetchToken(cookies.refresh_token);
-
-  if (cookies.cartId && !user) {
-    cart = await fetchCart(cookies.cartId);
-  }
+  const cartItemsCountResponse = await fetchCartItemsCountResponse(
+    cookies.cartId
+  );
 
   const categoriesResponse = await client.query({
     query: CATEGORIES,
@@ -35,7 +32,10 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
   return {
     props: {
       categories: categoriesResponse.data.categories,
-      cart: user?.cart || cart || null,
+      initialCount:
+        cartItemsCountResponse !== 0
+          ? cartItemsCountResponse.data.cartItemsCount.count
+          : cartItemsCountResponse,
     },
   };
 };

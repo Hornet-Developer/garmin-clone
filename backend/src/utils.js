@@ -51,17 +51,17 @@ export async function getUserId(userQuery, req, authToken) {
       if (!payload.sub) {
         return { userId: null, userRole: null };
       }
-      const { role: userRole } = await userQuery.findUnique({
+      const { role: userRole, cartId } = await userQuery.findUnique({
         where: { id: payload.sub },
       });
-      return { userId: payload.sub, userRole };
+      return { userId: payload.sub, userRole, cartId, token };
     }
   } else if (authToken) {
     const { userId } = getTokenPayload(authToken);
     const user = await userQuery.findUnique({
       where: { id: userId },
     });
-    return { userId, userRole: user.role, token };
+    return { userId, userRole: user.role, cartId: user.cartId, token };
   }
 
   return { userId: null, userRole: null };
@@ -78,7 +78,7 @@ export async function getDynamicContext(userQuery, ctx) {
   return { userId, userRole };
 }
 
-export const updateCart = ({ id, item, cartQueryUpdate }) =>
+export const updateCartItems = ({ id, item, cartQueryUpdate }) =>
   cartQueryUpdate({
     where: { id },
     data: {

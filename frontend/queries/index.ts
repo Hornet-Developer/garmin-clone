@@ -218,6 +218,7 @@ export const USER_SESSION = gql`
         role
         username
         isActive
+        cartId
         cart {
           id
           cartItems {
@@ -227,6 +228,14 @@ export const USER_SESSION = gql`
       }
       refresh_token
       expires_in
+    }
+  }
+`;
+
+export const ITEMS_CART_COUNT = gql`
+  query CartItemsCount($cartId: String!) {
+    cartItemsCount(cartId: $cartId) {
+      count
     }
   }
 `;

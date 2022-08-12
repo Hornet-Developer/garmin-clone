@@ -1,5 +1,7 @@
 import { useMutation } from "@apollo/client";
+import FullScreenLoading from "components/loading/full-screen";
 import { useAuthContext } from "contexts/auth";
+import { useCartItemsCountContext } from "contexts/cartItemsCount";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { LOGIN } from "queries/mutations";
@@ -8,8 +10,9 @@ import styled from "styled-components";
 
 const Login = () => {
   const ref = useRef<HTMLInputElement | null>(null);
-  const [login] = useMutation(LOGIN);
+  const [login, { loading, error }] = useMutation(LOGIN);
   const { setLoggedUser, setToken } = useAuthContext();
+  const { setQuantity } = useCartItemsCountContext();
   const router = useRouter();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -20,6 +23,7 @@ const Login = () => {
       });
       await setToken(loginData.data.login?.refresh_token);
       await setLoggedUser(loginData.data.login?.user);
+      await setQuantity(loginData.data.login?.totalQuantity);
       await router.replace("/");
     }
 
@@ -28,6 +32,7 @@ const Login = () => {
 
   return (
     <Container>
+      {loading && <FullScreenLoading />}
       <h1 className="tracking-[0.2em] text-center font-black text-lg pb-4 uppercase">
         account
       </h1>
@@ -52,7 +57,7 @@ const Login = () => {
           </div>
           <input
             type="submit"
-            className="border-solid border-[1px] border-blue-200 w-full h-10 bg-blue-300 mb-6 text-white"
+            className="border-solid border-[1px] border-blue-200 w-full h-10 bg-blue-300 mb-6 text-white cursor-pointer"
             value="SIGN IN"
           />
         </form>

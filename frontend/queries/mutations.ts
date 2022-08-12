@@ -9,9 +9,11 @@ export const LOGIN = gql`
         role
         isActive
         createdAt
+        cartId
       }
       refresh_token
       expires_in
+      totalQuantity
     }
   }
 `;
@@ -41,8 +43,8 @@ export const LOGOUT = gql`
 `;
 
 export const ADD_TO_CART = gql`
-  mutation AddItemToCart($cartId: String, $item: CartItemInput) {
-    addItemToCart(cartId: $cartId, item: $item) {
+  mutation AddItemToCart($item: CartItemInput, $price: Float!) {
+    addItemToCart(item: $item, price: $price) {
       id
     }
   }
@@ -55,6 +57,52 @@ export const CREATE_CART = gql`
       cartItems {
         id
       }
+    }
+  }
+`;
+
+export const UPDATE_CART = gql`
+  mutation UpdateCart($cartId: String!, $item: ItemInput!) {
+    updateCart(cartId: $cartId, item: $item) {
+      id
+      subtotal
+      formattedSubtotal
+      estimatedTotal
+      formattedEstimatedTotal
+      cartItems {
+        id
+        product {
+          id
+          name
+          description
+          subDescription
+          partNumber
+          price
+          formattedPrice
+          imgList
+        }
+        quantity
+        model {
+          id
+          color
+          img
+        }
+        features {
+          id
+          name
+          item
+        }
+        createdAt
+      }
+      createdAt
+    }
+  }
+`;
+
+export const DELETE_CART_ITEM = gql`
+  mutation DeletecartItem($itemId: String!) {
+    deletecartItem(itemId: $itemId) {
+      quantity
     }
   }
 `;

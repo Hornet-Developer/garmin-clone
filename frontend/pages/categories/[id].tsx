@@ -5,7 +5,7 @@ import { parse } from "cookie";
 import type { GetServerSideProps, NextPage } from "next";
 import { CATEGORIES, CATEGORY, PRODUCTS_BY_CATEGORY } from "queries";
 import { CategoryType, ProductType } from "types";
-import { fetchCart, fetchToken } from "utils/helpers";
+import { fetchCartItemsCountResponse, fetchToken } from "utils/helpers";
 
 const CategoryPage: NextPage<{
   categories: CategoryType[];
@@ -27,13 +27,15 @@ export const getServerSideProps: GetServerSideProps = async ({
   req,
 }) => {
   const cookies = parse(req.headers.cookie || "");
-  let cart = null;
 
-  const { user } = await fetchToken(cookies.refresh_token);
+  const { refreshToken, user, expires_in } = await fetchToken(
+    cookies.refresh_token
+  );
 
-  if (cookies.cartId && !user) {
-    cart = await fetchCart(cookies.cartId);
-  }
+  const cartItemsCountResponse = await fetchCartItemsCountResponse(
+    cookies.cartId,
+    user
+  );
 
   const categoriesResponse = await client.query({
     query: CATEGORIES,
@@ -59,7 +61,13 @@ export const getServerSideProps: GetServerSideProps = async ({
       category: categoryResponse.data.category,
       products: productsResponse.data.productsByCategory,
       categories: categoriesResponse.data.categories,
-      cart: user?.cart || cart || null,
+      refreshToken,
+      user,
+      expires_in,
+      initialCount:
+        cartItemsCountResponse !== 0
+          ? cartItemsCountResponse.data.cartItemsCount.count
+          : cartItemsCountResponse,
     },
   };
 };

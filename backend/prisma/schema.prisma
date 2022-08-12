@@ -17,6 +17,7 @@ model Banner {
   title     String   @unique
   subtitle  String
   createdAt DateTime @default(now())
+  updateAt  DateTime @updatedAt
 }
 
 model Featured {
@@ -27,6 +28,7 @@ model Featured {
   new       Boolean  @default(false)
   sale      Boolean  @default(false)
   createdAt DateTime @default(now())
+  updateAt  DateTime @updatedAt
 }
 
 model Pod {
@@ -34,6 +36,7 @@ model Pod {
   img       String
   title     String   @unique
   createdAt DateTime @default(now())
+  updateAt  DateTime @updatedAt
 }
 
 model CoverImgList {
@@ -54,6 +57,7 @@ model Category {
   coverImg      String
   coverImgsList CoverImgList[]
   series        Serie[]
+  updateAt      DateTime       @updatedAt
 }
 
 model Serie {
@@ -62,6 +66,7 @@ model Serie {
   category   Category  @relation(fields: [categoryId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   categoryId String    @db.ObjectId
   products   Product[]
+  updateAt   DateTime  @updatedAt
 }
 
 enum Gender {
@@ -73,8 +78,9 @@ model ChosenFeature {
   id         String    @id @default(auto()) @map("_id") @db.ObjectId
   name       String
   item       String
-  cartItem   CartItem? @relation(fields: [cartItemId], references: [id])
-  cartItemId String[]  @db.ObjectId
+  cartItem   CartItem? @relation(fields: [cartItemId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  cartItemId String?   @db.ObjectId
+  updateAt   DateTime  @updatedAt
 }
 
 model ProductFeature {
@@ -84,6 +90,7 @@ model ProductFeature {
   items       String[]
   product     Product  @relation(fields: [productId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   productId   String   @db.ObjectId
+  updateAt    DateTime @updatedAt
 }
 
 model Model {
@@ -93,6 +100,7 @@ model Model {
   product   Product    @relation(fields: [productId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   productId String     @db.ObjectId
   cartItems CartItem[]
+  updateAt  DateTime   @updatedAt
 }
 
 model Product {
@@ -120,6 +128,7 @@ model Product {
   serie                 Serie            @relation(fields: [serieId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   serieId               String           @db.ObjectId
   createdAt             DateTime         @default(now())
+  updateAt              DateTime         @updatedAt
 }
 
 model CartItem {
@@ -135,19 +144,21 @@ model CartItem {
   createdAt DateTime        @default(now())
   order     Order?          @relation(fields: [orderId], references: [id])
   orderId   String?         @db.ObjectId
+  updateAt  DateTime        @updatedAt
 }
 
 model Cart {
   id                      String     @id @default(auto()) @map("_id") @db.ObjectId
-  subtotal                Float      @default(0)
-  formattedSubtotal       String     @default("0.00")
-  estimatedTotal          Float      @default(0)
-  formattedEstimatedTotal String     @default("0.00")
+  subtotal                Float      @default(0.00)
+  formattedSubtotal       String     @default("$0.00 USD")
+  estimatedTotal          Float      @default(0.00)
+  formattedEstimatedTotal String     @default("$0.00 USD")
   expires                 DateTime?
   inSession               Boolean    @default(true)
   cartItems               CartItem[]
   user                    User?
   createdAt               DateTime   @default(now())
+  updateAt                DateTime   @updatedAt
 }
 
 enum Role {
@@ -163,6 +174,7 @@ model User {
   cart      Cart?    @relation(fields: [cartId], references: [id], onUpdate: Cascade, onDelete: Cascade)
   cartId    String?  @unique @db.ObjectId
   createdAt DateTime @default(now())
+  updateAt  DateTime @updatedAt
 }
 
 enum OrderStatus {
