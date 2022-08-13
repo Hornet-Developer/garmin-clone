@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@apollo/client": "^3.6.9",
+    "@faker-js/faker": "^7.4.0",
     "graphql": "^16.5.0",
     "lodash": "^4.17.21",
     "next": "12.2.2",
