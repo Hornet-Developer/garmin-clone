@@ -9,10 +9,14 @@ import { useAuthContext } from "contexts/auth";
 import { parse } from "cookie";
 import { GetServerSideProps, NextPage } from "next";
 import { useRouter } from "next/router";
-import { CATEGORIES, FULL_CART } from "queries";
+import { FULL_CART } from "queries";
 import { Fragment } from "react";
 import { CategoryType } from "types";
-import { fetchCartItemsCountResponse, fetchToken } from "utils/helpers";
+import {
+  fetchCartItemsCountResponse,
+  fetchCategoriesResponse,
+  fetchToken,
+} from "utils/helpers";
 
 export type TRefreshQuery = (
   variables?:
@@ -72,10 +76,7 @@ const CartPage: NextPage<{
 };
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
-  const categoriesResponse = await client.query({
-    query: CATEGORIES,
-    variables: { hasSeries: false, hasCoverImgsList: false },
-  });
+  const categoriesResponse = await fetchCategoriesResponse();
 
   const cookies = parse(req.headers.cookie || "");
 

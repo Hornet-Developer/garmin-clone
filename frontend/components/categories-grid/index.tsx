@@ -11,6 +11,7 @@ const Categories: React.FC<{ categories?: CategoryType[] }> = ({
       </h2>
       <div className="flex flex-col gap-4 md:flex-row md:flex-wrap">
         {categories?.length &&
+          categories.length > 0 &&
           categories.map((category) => (
             <CoverImgCard
               href={`categories/${category.id}`}

@@ -78,8 +78,7 @@
   }
 
   .font-opensans {
-    font-family: "open-sans", "Roboto", ui-sans-serif, system-ui, -apple-system,
-      BlinkMacSystemFont;
+    font-family: open sans, sans-serif;
   }
 
   .flex-0-auto {

@@ -3,13 +3,14 @@ import { PrimaryButton } from "styles/buttons";
 import { ItemType } from "types";
 import { Card, H2 } from "./styles";
 
-const SimpleCard: React.FC<{ item: ItemType; handleClick?: () => void }> = ({
-  item,
-  handleClick,
-}) => {
+const SimpleCard: React.FC<{
+  item: ItemType;
+  handleClick?: () => void;
+  href?: string;
+}> = ({ item, handleClick, href }) => {
   return (
     <Card>
-      <Link href="/">
+      <Link href={href || "/"}>
         <figure className="flex flex-col gap-4 pb-4 text-start">
           <img src={item.img} alt="Product Card" />
           <figcaption className="flex flex-col gap-8 h-full">

@@ -4,9 +4,12 @@ import { Subtitle, Title } from "./styles";
 import { BannerType } from "types";
 import { mq, size } from "utils";
 
-const Banner: React.FC<{ banner: BannerType }> = ({ banner }) => {
+const Banner: React.FC<{ banner: BannerType; href?: string }> = ({
+  banner,
+  href,
+}) => {
   return (
-    <Link href="/">
+    <Link href={href || "/"}>
       <figure className="m-0 w-full relative">
         <picture className="w-full lg:opacity-90">
           <source media={`(max-width: ${size.sm})`} srcSet={banner.imgM} />

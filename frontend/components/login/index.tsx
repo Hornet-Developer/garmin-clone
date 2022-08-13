@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 import { LOGIN } from "queries/mutations";
 import { useRef } from "react";
 import styled from "styled-components";
-import ErrorMessage from "./error-message";
+import ErrorMessage from "../error-handler/error-message";
 
 const Login = () => {
   const ref = useRef<HTMLInputElement | null>(null);
@@ -42,7 +42,7 @@ const Login = () => {
       </p>
       <div>
         <form
-          className="p-4 pb-0 w-full h-[309.141px]"
+          className="p-4 pb-0 w-full max-w-md m-auto h-[309.141px]"
           onSubmit={(event) => handleSubmit(event)}
         >
           {error && <ErrorMessage message={error.message} />}
@@ -54,7 +54,6 @@ const Login = () => {
               type="text"
               className="border-solid border-[1px] border-grey-300 w-full h-10 focus:border-[2px] focus:outline-0 pl-4 text-sm"
               ref={ref}
-              // onFocus={() => {}}
             />
           </div>
           <input

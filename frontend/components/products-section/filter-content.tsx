@@ -11,7 +11,7 @@ const FilterContent: React.FC<{
       className={`${!isOpen ? "hidden" : ""} px-4 tracking-wide laptop:block`}
     >
       <SortBy cls="laptop:hidden" />
-      {series?.length && <Series series={series} />}
+      {series?.length && series?.length > 0 && <Series series={series} />}
     </div>
   );
 };

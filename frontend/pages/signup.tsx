@@ -1,6 +1,7 @@
 import client from "apollo-client";
 import Layout from "components/layout";
 import Login from "components/login";
+import Signup from "components/signup";
 import { parse } from "cookie";
 import { GetServerSideProps, NextPage } from "next";
 import { CategoryType } from "types";
@@ -9,12 +10,15 @@ import {
   fetchCategoriesResponse,
 } from "utils/helpers";
 
-const LoginPage: NextPage<{
+const SignupPage: NextPage<{
   categories?: CategoryType[];
 }> = ({ categories }) => {
   return (
-    <Layout title="Garmin International | Login Page" categories={categories}>
-      <Login />
+    <Layout
+      title="Garmin International | Create Account Page"
+      categories={categories}
+    >
+      <Signup />
     </Layout>
   );
 };
@@ -39,4 +43,4 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
   };
 };
 
-export default LoginPage;
+export default SignupPage;

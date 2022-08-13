@@ -239,3 +239,50 @@ export const ITEMS_CART_COUNT = gql`
     }
   }
 `;
+
+export const ALL_PRODUCTS = gql`
+  query Products(
+    $categoryId: String
+    $serieId: String
+    $filter: productFilter
+    $search: String
+  ) {
+    products(
+      categoryId: $categoryId
+      serieId: $serieId
+      filter: $filter
+      search: $search
+    ) {
+      id
+      name
+      description
+      subDescription
+      gender
+      price
+      formattedPrice
+      oldPrice
+      formattedOldPrice
+      interestFree
+      formattedInterestFree
+      imgList
+      features {
+        id
+        name
+        description
+        items
+      }
+      models {
+        id
+        color
+        img
+      }
+      video
+      sale
+      available
+      new
+      createdAt
+      subscriptionUrl
+      partNumber
+    }
+  }
+`;

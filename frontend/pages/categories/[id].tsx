@@ -3,9 +3,13 @@ import Category from "components/category/intex";
 import Layout from "components/layout";
 import { parse } from "cookie";
 import type { GetServerSideProps, NextPage } from "next";
-import { CATEGORIES, CATEGORY, PRODUCTS_BY_CATEGORY } from "queries";
+import { CATEGORY, PRODUCTS_BY_CATEGORY } from "queries";
 import { CategoryType, ProductType } from "types";
-import { fetchCartItemsCountResponse, fetchToken } from "utils/helpers";
+import {
+  fetchCartItemsCountResponse,
+  fetchCategoriesResponse,
+  fetchToken,
+} from "utils/helpers";
 
 const CategoryPage: NextPage<{
   categories: CategoryType[];
@@ -37,10 +41,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     user
   );
 
-  const categoriesResponse = await client.query({
-    query: CATEGORIES,
-    variables: { hasSeries: false, hasCoverImgsList: false },
-  });
+  const categoriesResponse = await fetchCategoriesResponse();
 
   const categoryResponse = await client.query({
     query: CATEGORY,

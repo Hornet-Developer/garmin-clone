@@ -1,4 +1,4 @@
-import { SerieType } from "types";
+import { CategoryType, SerieType } from "types";
 
 export function initiateState(series: SerieType[], serieId?: string) {
   const picked = Object.create({});

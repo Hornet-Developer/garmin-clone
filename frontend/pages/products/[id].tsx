@@ -4,15 +4,14 @@ import Product from "components/product";
 import { ProductInfoProvider } from "components/product/product-info-context";
 import { parse } from "cookie";
 import type { GetServerSideProps, NextPage } from "next";
-import {
-  CATEGORIES,
-  CATEGORY_PRODUCT_PAGE,
-  PRODUCT,
-  SERIE_PRODUCT_PAGE,
-} from "queries";
+import { CATEGORY_PRODUCT_PAGE, PRODUCT, SERIE_PRODUCT_PAGE } from "queries";
 import { useMemo } from "react";
 import { CategoryType, ProductType, SerieType } from "types";
-import { fetchCartItemsCountResponse, fetchToken } from "utils/helpers";
+import {
+  fetchCartItemsCountResponse,
+  fetchCategoriesResponse,
+  fetchToken,
+} from "utils/helpers";
 
 const ProductPage: NextPage<{
   categories: CategoryType[];
@@ -59,10 +58,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     user
   );
 
-  const categoriesResponse = await client.query({
-    query: CATEGORIES,
-    variables: { hasSeries: false, hasCoverImgsList: false },
-  });
+  const categoriesResponse = await fetchCategoriesResponse();
 
   const productResponse = await client.query({
     query: PRODUCT,

@@ -28,10 +28,10 @@ const Products: React.FC<{ products: ProductType[] }> = ({ products }) => {
       });
     } else {
       filterProducts({
-        variables: { categoryId: query.id as string },
+        variables: { categoryId: (query.id || query.categoryId) as string },
       });
     }
-  }, [query.serieId, query.id]);
+  }, [query.serieId, query.id, query.categoryId]);
 
   return (
     <div className="laptop:flex laptop:flex-col laptop:w-full xs:p-4">
@@ -43,6 +43,7 @@ const Products: React.FC<{ products: ProductType[] }> = ({ products }) => {
       ) : (
         <div className="flex flex-col gap-4 pt-8 px-4 xs:px-0 xs:flex-row xs:flex-wrap">
           {(data?.productsByCategory || products)?.length &&
+            (data?.productsByCategory || products).length > 0 &&
             (data?.productsByCategory || products).map(
               (product: ProductType) => (
                 <ProductCard key={product.id} product={product} />

@@ -39,27 +39,29 @@ const Series: React.FC<{ series: SerieType[] }> = ({ series }) => {
   return (
     <div className="py-4 border-solid border-grey-300 border-b-[1px] laptop:border-t-[1px]">
       <div className="font-bold text-[0.9rem]">Shop By Serie</div>
-      {series.map((serie) => (
-        <div
-          key={serie.id}
-          className="w-full flex justify-between items-center py-2"
-        >
-          <div className="flex items-center">
-            <input
-              id={serie.id}
-              type="checkbox"
-              checked={checked[serie.id] || false}
-              onChange={() => handleChange(serie.id)}
-            />
-            <label htmlFor={serie.id} className="ml-2">
-              {serie.name}
-            </label>
+      {series?.length &&
+        series?.length > 0 &&
+        series.map((serie) => (
+          <div
+            key={serie.id}
+            className="w-full flex justify-between items-center py-2"
+          >
+            <div className="flex items-center">
+              <input
+                id={serie.id}
+                type="checkbox"
+                checked={checked[serie.id] || false}
+                onChange={() => handleChange(serie.id)}
+              />
+              <label htmlFor={serie.id} className="ml-2">
+                {serie.name}
+              </label>
+            </div>
+            <div>
+              <span>(0)</span>
+            </div>
           </div>
-          <div>
-            <span>(0)</span>
-          </div>
-        </div>
-      ))}
+        ))}
     </div>
   );
 };

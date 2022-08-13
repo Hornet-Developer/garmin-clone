@@ -1,5 +1,5 @@
 import Header from "components/header";
-import FullScreenLoading from "components/loading/full-screen";
+import { FullScreenNewPage, Loader } from "components/loading/styles";
 import { useToogleNav } from "contexts/toggle-nav";
 import { useSsrLoading } from "hooks/useSsrLoading";
 import { CategoryType } from "types";
@@ -18,9 +18,11 @@ const Layout: React.FC<{
       <Head title={title} />
       <Header categories={categories} />
       {loading ? (
-        <FullScreenLoading />
+        <FullScreenNewPage>
+          <Loader />
+        </FullScreenNewPage>
       ) : (
-        <main className={`${isOpen ? "hidden" : "block"} lg:block`}>
+        <main className={`${isOpen ? "hidden" : "block"} lg:block pb-10`}>
           {children}
         </main>
       )}

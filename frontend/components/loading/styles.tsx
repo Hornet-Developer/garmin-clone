@@ -7,6 +7,13 @@ export const FullScreen = styled.div.attrs({
   background-color: rgba(255, 255, 255, 0.7);
 `;
 
+export const FullScreenNewPage = styled.div.attrs({
+  className:
+    "relative w-[100vw] h-[100vh] flex justify-center items-center left-0 bottom-0 z-[99999]",
+})`
+  background-color: rgba(255, 255, 255, 0.7);
+`;
+
 export const Loader = () => (
   <div className="flex justify-center items-center gap-2">
     <Cycle from="0" to="33" />

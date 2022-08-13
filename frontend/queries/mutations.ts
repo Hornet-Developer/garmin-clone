@@ -106,3 +106,21 @@ export const DELETE_CART_ITEM = gql`
     }
   }
 `;
+
+export const SIGNUP = gql`
+  mutation Signup($username: String!) {
+    signup(username: $username) {
+      user {
+        id
+        username
+        role
+        isActive
+        createdAt
+        cartId
+      }
+      refresh_token
+      expires_in
+      totalQuantity
+    }
+  }
+`;

@@ -1,5 +1,10 @@
 import client from "apollo-client";
-import { INITIAL_CART, ITEMS_CART_COUNT, USER_SESSION } from "queries";
+import {
+  CATEGORIES,
+  INITIAL_CART,
+  ITEMS_CART_COUNT,
+  USER_SESSION,
+} from "queries";
 import { CREATE_CART } from "queries/mutations";
 import { UserType } from "types";
 
@@ -63,3 +68,9 @@ export const fetchCartItemsCountResponse = async (
         variables: { cartId: user?.cartId || cartIdcookie },
       })
     : 0;
+
+export const fetchCategoriesResponse = async () =>
+  await client.query({
+    query: CATEGORIES,
+    variables: { hasSeries: false, hasCoverImgsList: false },
+  });

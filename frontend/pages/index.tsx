@@ -6,21 +6,28 @@ import Layout from "components/layout";
 import Pods from "components/pod";
 import { parse } from "cookie";
 import type { GetServerSideProps, NextPage } from "next";
-import { BANNERS, CATEGORIES, FEATUREDS, PODS } from "queries";
+import { BANNERS, FEATUREDS, PODS } from "queries";
 import { BannerType, CategoryType, FeaturedType, PodType } from "types";
-import { fetchCartItemsCountResponse, fetchToken } from "utils/helpers";
+import {
+  fetchCartItemsCountResponse,
+  fetchCategoriesResponse,
+  fetchToken,
+} from "utils/helpers";
 
 const Home: NextPage<{
-  categories?: CategoryType[];
-  banners?: BannerType[];
-  featureds?: FeaturedType[];
-  pods?: PodType[];
+  categories: CategoryType[];
+  banners: BannerType[];
+  featureds: FeaturedType[];
+  pods: PodType[];
 }> = ({ categories, banners, featureds, pods }) => {
   return (
     <Layout title="Garmin International | Home" categories={categories}>
-      <Banner banners={banners} />
-      <Featureds featureds={featureds} />
-      <Pods pods={pods} />
+      <Banner banners={banners} href={`/categories/${categories[0].id}`} />
+      <Featureds
+        featureds={featureds}
+        href={`/categories/${categories[1].id}`}
+      />
+      <Pods pods={pods} href={`/categories/${categories[2].id}`} />
       <Categories categories={categories} />
     </Layout>
   );
@@ -38,10 +45,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
     user
   );
 
-  const categoriesResponse = await client.query({
-    query: CATEGORIES,
-    variables: { hasSeries: false, hasCoverImgsList: false },
-  });
+  const categoriesResponse = await fetchCategoriesResponse();
 
   const bannersResponse = await client.query({
     query: BANNERS,

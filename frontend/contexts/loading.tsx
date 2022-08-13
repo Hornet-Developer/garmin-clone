@@ -1,4 +1,4 @@
-import { createContext, useContext, useRef, useState } from "react";
+import { createContext, useContext, useRef } from "react";
 
 const SsrLoadingContext = createContext<{
   samePageRef: React.MutableRefObject<boolean>;

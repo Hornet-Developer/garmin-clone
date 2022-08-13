@@ -17,7 +17,7 @@ export const Title = styled.h2.attrs({
 `;
 
 export const Card = styled.article.attrs({
-  className: "relative px-6 pt-16 pb-4 w-full h-full",
+  className: "relative px-6 pt-16 pb-4 w-full h-full cursor-pointer",
 })`
   box-shadow: 0 2px 3px 1px ${(props) => props.theme.colors.grey["200"]};
 `;

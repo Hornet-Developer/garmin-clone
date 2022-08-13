@@ -258,6 +258,77 @@ async function deletecartItem(_, { itemId }, { prisma, cookies, cartId }) {
   return { quantity: deletedItem.quantity };
 }
 
+async function signup(_, { username }, { prisma, res, cookies }) {
+  const user = await prisma.user.create({
+    data: { username, role: "Customer", cart: { create: {} } },
+  });
+
+  const { refresh_token, expires_in } = signToken(user.id);
+
+  res.cookie("refresh_token", refresh_token, {
+    httpOnly: true,
+    sameSite: "strict",
+    secure: true,
+    // signed: true,
+    maxAge: expires_in,
+  });
+
+  const authedCart = await prisma.cart.findUnique({
+    where: { id: user.cartId },
+    include: { cartItems: true },
+  });
+
+  let totalQuantity = authedCart.cartItems.reduce((acc, item) => {
+    acc += item.quantity;
+    return acc;
+  }, 0);
+
+  if (cookies?.cartId) {
+    const guestCart = await prisma.cart.findUnique({
+      where: { id: cookies.cartId },
+      include: { cartItems: true },
+    });
+
+    const cartItemIds = guestCart.cartItems?.map((item) => ({ id: item.id }));
+
+    totalQuantity += guestCart.cartItems.reduce((acc, item) => {
+      acc += item.quantity;
+      return acc;
+    }, 0);
+
+    const totalPrice = currency(guestCart.subtotal).add(authedCart.subtotal);
+
+    await prisma.cart.update({
+      where: { id: guestCart.id },
+      data: {
+        cartItems: { disconnect: cartItemIds },
+      },
+    });
+
+    await prisma.cart.update({
+      where: { id: user.cartId },
+      data: {
+        subtotal: totalPrice.value,
+        formattedSubtotal: `$${totalPrice.value} USD`,
+        estimatedTotal: totalPrice.value,
+        formattedEstimatedTotal: `$${totalPrice.value} USD`,
+        cartItems: { connect: cartItemIds },
+      },
+    });
+
+    await prisma.cart.delete({ where: { id: guestCart.id } });
+
+    res.clearCookie("cartId");
+  }
+
+  return {
+    user,
+    totalQuantity,
+    refresh_token,
+    expires_in,
+  };
+}
+
 // function createOrder(_, { products }, { prisma, res }) {}
 
 const Mutation = {
@@ -268,6 +339,7 @@ const Mutation = {
   addItemToCart,
   updateCart,
   deletecartItem,
+  signup,
 };
 
 export default Mutation;

@@ -46,6 +46,7 @@ type Mutation {
   fetchOrcreateCart: Cart!
   updateCart(cartId: String!, item: ItemInput!): Cart!
   deletecartItem(itemId: String!): DeleteItemCart!
+  signup(username: String!): AuthSession!
 }
 
 # type Subscription {}
