@@ -6,7 +6,6 @@
     "dev": "next dev",
     "build": "next build",
     "start": "npm run build && next start",
-    "heroku-postbuild": "npm start",
     "lint": "next lint",
     "test": "jest --watch"
   },
@@ -41,5 +40,8 @@
   },
   "msw": {
     "workerDirectory": "public"
-  }
+  },
+  "cacheDirectories": [
+    ".next/cache"
+  ]
 }
