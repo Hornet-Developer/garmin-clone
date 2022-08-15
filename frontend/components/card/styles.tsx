@@ -1,13 +1,13 @@
 import styled from "styled-components";
 
 export const Card = styled.article.attrs({
-  className: "flex relative w-auto cursor-pointer tablet:mx-0 tablet:w-2/4",
+  className: "flex relative w-auto tablet:mx-0 tablet:w-2/4",
 })`
   box-shadow: 0 2px 4px 1px rgb(0 0 0 / 24%);
 `;
 
 export const ImgBgCard = styled.article.attrs<{ index?: number }>((props) => ({
-  className: `flex relative cursor-pointer md:flex-1 ${
+  className: `flex relative md:flex-1 ${
     props.index && props.index > 2 ? "md:w-full md:flex-none" : "md:basis-3/12"
   } ${props.index === 3 ? "md:mt-4" : ""}`,
 }))<{ index?: number }>`

@@ -94,24 +94,28 @@ async function main() {
     app,
     path: "/graphql",
     cors: {
+      // origin: "*",
       credentials: true,
       origin: [
         "http://localhost:3000",
+        "https://garmin-clone.netlify.app",
+        "https://62f8c9ae94aca554c7cf5d75--friendly-fox-a3e655.netlify.app/",
+        "garmin-clone-aekryz1993.vercel.app",
+        "garmin-clone-git-main-aekryz1993.vercel.app",
+        "garmin-clone.vercel.app",
+        "https://vercel.com/aekryz1993/garmin-clone/BYSrcaFv1R45F8EG9gCif37EyNg2",
         "http://192.168.100.10:3000",
-        // "https://vercel.com/",
-        // "https://garmin-clone-mclfgwqr0-aekryz1993.vercel.app/",
+        "https://garmin-clone.vercel.app/",
+        "https://garmin-clone-o48qfmlrx-aekryz1993.vercel.app/",
         // "https://garmin-clone-frontend.herokuapp.com/",
-        // "https://garmin-clone.vercel.app/",
+        "https://garmin-clone.vercel.app/",
         // "https://studio.apollographql.com",
       ],
     },
   });
 
   await new Promise((resolve) =>
-    httpServer.listen(
-      { host: "192.168.100.10", port: process.env.PORT || 4001 },
-      resolve
-    )
+    httpServer.listen({ port: process.env.PORT || 4001 }, resolve)
   );
   console.log(
     `🚀 Server ready at http://localhost:${process.env.PORT || 4001}${

@@ -2,7 +2,7 @@ import { AiOutlineShoppingCart } from "react-icons/ai";
 import { VscAccount } from "react-icons/vsc";
 import { BsQuestionCircle } from "react-icons/bs";
 import SearchBar from "./search-bar";
-import { useState } from "react";
+import { createRef, useRef, useState } from "react";
 import AccountUtilBar from "./acount-utility-bar";
 import { memo } from "react";
 import { useMutation } from "@apollo/client";
@@ -11,13 +11,21 @@ import { useAuthContext } from "contexts/auth";
 import { useRouter } from "next/router";
 import FullScreenLoading from "components/loading/full-screen";
 import { useCartItemsCountContext } from "contexts/cartItemsCount";
+import { useToogleNav } from "contexts/toggle-nav";
+import { useOutsideClick } from "hooks/useOutsideClick";
 
 const ActionsSection = memo(() => {
   const [isDisplay, toggleSearchBar] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const { isOpen: isNavOpen, closeNav } = useToogleNav();
   const { loggedUser, token } = useAuthContext();
   const router = useRouter();
   const { cartItemsCount } = useCartItemsCountContext();
+  const targetRef = useRef<HTMLDivElement | null>(null);
+  const expectedRef = useRef<HTMLDivElement | null>(null);
+  useOutsideClick(targetRef, expectedRef, () => {
+    setIsOpen(false);
+  });
 
   const [fetchOrcreateCart, { loading: createCartLoaing }] =
     useMutation(CREATE_CART);
@@ -35,7 +43,12 @@ const ActionsSection = memo(() => {
   };
 
   return (
-    <div className="flex w-full justify-end flex-wrap lg:flex-nowrap lg:w-auto relative self-end lg:py-3 lg:mr-4 xl:mx-0">
+    <div
+      className="flex w-full justify-end flex-wrap lg:flex-nowrap lg:w-auto relative self-end lg:py-3 lg:mr-4 xl:mx-0"
+      onClick={() => {
+        isNavOpen && closeNav();
+      }}
+    >
       {createCartLoaing && <FullScreenLoading />}
       <div className="hidden cursor-pointer lg:flex items-center justify-start h-12 pr-6">
         <div className="flex items-center gap-2">
@@ -47,8 +60,10 @@ const ActionsSection = memo(() => {
       </div>
       <SearchBar isDisplay={isDisplay} toggleSearchBar={toggleSearchBar} />
       <div className="cursor-pointer w-8 h-12 text-center flex justify-center items-center lg:w-10">
-        <VscAccount size="1.1rem" onClick={() => setIsOpen(!isOpen)} />
-        <AccountUtilBar isOpen={isOpen} setIsOpen={setIsOpen} />
+        <div className="inline-block" ref={expectedRef}>
+          <VscAccount size="1.1rem" onClick={() => setIsOpen(!isOpen)} />
+        </div>
+        <AccountUtilBar isOpen={isOpen} setIsOpen={setIsOpen} ref={targetRef} />
       </div>
       <div className="cursor-pointer w-8 h-12 text-center flex justify-center items-center relative lg:w-10">
         <div className="relative" onClick={handleCartClick}>

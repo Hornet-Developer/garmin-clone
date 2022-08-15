@@ -109,7 +109,7 @@ async function products(
   return products;
 }
 
-async function productsByCategory(_, { categoryId, serieId }, { prisma }) {
+async function productsByCategory(_, { categoryId, serieId }, { prisma, req }) {
   if (serieId) {
     const existSerie = await prisma.serie.findMany({
       where: {

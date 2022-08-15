@@ -4,6 +4,7 @@ import { useCartItemsCountContext } from "contexts/cartItemsCount";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { LOGOUT } from "queries/mutations";
+import { forwardRef } from "react";
 import styled from "styled-components";
 import { mq } from "utils";
 
@@ -26,10 +27,13 @@ const NavItem = ({
   </Link>
 );
 
-const AccountUtilBar: React.FC<{
-  isOpen: boolean;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}> = ({ isOpen, setIsOpen }) => {
+const AccountUtilBar = forwardRef<
+  HTMLDivElement | undefined,
+  {
+    isOpen: boolean;
+    setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  }
+>(({ isOpen, setIsOpen }, ref) => {
   const { setLoggedUser, setToken, token } = useAuthContext();
   const [logout] = useMutation(LOGOUT);
   const { reset } = useCartItemsCountContext();
@@ -46,7 +50,7 @@ const AccountUtilBar: React.FC<{
   };
 
   return (
-    <Container isopen={isOpen ? isOpen.toString() : undefined}>
+    <Container isopen={isOpen ? isOpen.toString() : undefined} ref={ref}>
       <NavItem
         text="Account"
         pathname={token ? "/account" : "/login"}
@@ -69,13 +73,16 @@ const AccountUtilBar: React.FC<{
       )}
     </Container>
   );
-};
+});
 
-const Container = styled.div.attrs<{ isopen: string | undefined }>((props) => ({
-  className: `${
-    props.isopen ? "flex" : "hidden"
-  } absolute flex-col border-solid border-[1px] border-grey-300 bg-white z-10 top-full -left-6 font-roboto lg:left-16 lg:right-0 lg:py-4`,
-}))<{ isopen: string | undefined }>`
+const Container = styled.div.attrs<{ isopen: string | undefined; ref: any }>(
+  (props) => ({
+    ...props,
+    className: `${
+      props.isopen ? "flex" : "hidden"
+    } absolute flex-col border-solid border-[1px] border-grey-300 bg-white z-10 top-full -left-6 font-roboto lg:left-16 lg:right-0 lg:py-4`,
+  })
+)<{ isopen: string | undefined; ref: any }>`
   width: calc(100% + 3rem);
   font-size: 0.7rem;
   @media ${mq.lg} {

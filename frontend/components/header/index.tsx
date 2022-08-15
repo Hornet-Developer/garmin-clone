@@ -5,14 +5,24 @@ import { BottomSection, Container, TopSection } from "./styles";
 import ActionsSection from "./actions-section";
 import { CategoryType } from "types";
 import Nav from "./nav";
+import { useToogleNav } from "contexts/toggle-nav";
 
-const Logo = () => (
-  <Link href="/">
-    <div className="z-10 absolute top-0 w-[130px] h-12 cursor-pointer lg:top-3 lg:w-[180px] xl:relative xl:top-0">
-      <Image src="/logo.svg" layout="fill" />
-    </div>
-  </Link>
-);
+const Logo = () => {
+  const { isOpen, closeNav } = useToogleNav();
+
+  return (
+    <Link href="/">
+      <div
+        className="z-10 absolute top-0 w-[130px] h-12 cursor-pointer lg:top-3 lg:w-[180px] xl:relative xl:top-0"
+        onClick={() => {
+          isOpen && closeNav();
+        }}
+      >
+        <Image src="/logo.svg" layout="fill" />
+      </div>
+    </Link>
+  );
+};
 
 const Header = ({ categories }: { categories?: CategoryType[] }) => (
   <Container>
