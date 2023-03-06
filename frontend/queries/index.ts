@@ -226,8 +226,8 @@ export const USER_SESSION = gql`
           }
         }
       }
-      refresh_token
-      expires_in
+      token
+      expiresIn
     }
   }
 `;

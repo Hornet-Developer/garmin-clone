@@ -1,82 +1,116 @@
 import { AuthenticationError } from "apollo-server-core";
 import jwt from "jsonwebtoken";
 
-export const APP_SECRET = "App-secret";
-export const expires_in = 90 * 24 * 60 * 60 * 1000;
+export const APP_SECRET = "s3cr3t"
+export const expiresIn = () => Date.now() + 24 * 24 * 60 * 60 * 1000;
 
-export function getTokenPayload(token) {
+export const getTokenPayload = (token) => {
   try {
-    const payload = jwt.verify(token, APP_SECRET);
-    return payload;
+    const { sub, exp, iat } = jwt.verify(token, APP_SECRET);
+    return {
+      sub,
+      exp,
+      iat,
+    };
   } catch (error) {
-    console.log(error);
+    return {
+      statusCode: 403,
+      errorMessage: "Forbidden access",
+    };
   }
-}
+};
 
-export function generatePayload(sub) {
-  return { sub, iat: Date.now() };
-}
+export const generatePayload = (sub) => ({
+  sub,
+  iat: Date.now(),
+  exp: expiresIn(),
+});
 
-export function signToken(sub) {
-  const refresh_token = jwt.sign(generatePayload(sub), APP_SECRET, {
-    expiresIn: expires_in,
-  });
+export const signToken = (sub) => jwt.sign(generatePayload(sub), APP_SECRET);
 
-  return { refresh_token, expires_in };
-}
-
-// export async function getUserId(userQuery, req) {
-//   if (req) {
-//     const token = req.signedCookies.refresh_token;
-//     if (!token) throw new AuthenticationError("No token found");
-//     const { sub: userId } = getTokenPayload(token);
-//     const { role: userRole } = await userQuery.findUnique({
-//       where: { id: userId },
-//     });
-//     return { userId, userRole };
-//   }
-
-//   throw new AuthenticationError("Not authenticated");
-// }
-
-export async function getUserId(userQuery, req, authToken) {
-  if (req) {
-    const authHeader = req.headers.authorization;
-    if (authHeader) {
-      const token = authHeader.replace("Bearer ", "");
-      if (!token) {
-        return { userId: null, userRole: null };
-      }
-      const payload = getTokenPayload(token);
-      if (!payload.sub) {
-        return { userId: null, userRole: null };
-      }
-      const { role: userRole, cartId } = await userQuery.findUnique({
-        where: { id: payload.sub },
-      });
-      return { userId: payload.sub, userRole, cartId, token };
-    }
-  } else if (authToken) {
-    const { userId } = getTokenPayload(authToken);
-    const user = await userQuery.findUnique({
-      where: { id: userId },
-    });
-    return { userId, userRole: user.role, cartId: user.cartId, token };
-  }
-
-  return { userId: null, userRole: null };
-}
-
-export async function getDynamicContext(userQuery, ctx) {
-  const authHeader = ctx.connectionParams.Authorization;
+export async function getUserId(ctx) {
+  const authHeader = ctx.connectionParams?.Authorization;
   if (!authHeader) return null;
   const token = authHeader.replace("Bearer ", "");
-  if (!token) {
-    throw new AuthenticationError("No token found");
-  }
-  const { userId, userRole } = await getUserId(userQuery, undefined, token);
-  return { userId, userRole };
+  if (!token) return null;
+  const payload = getTokenPayload(token);
+  if (payload?.statusCode === 403) return null;
+
+  if (payload.exp - Date.now() <= 0) return null;
+
+  return payload.sub;
 }
+
+export const getUserAuth = (req, authToken) => {
+  if (req) {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || authHeader.length === 0){
+      return {
+        userId: null,
+        token: null,
+        expiresIn: undefined,
+      };}
+    if (authHeader) {
+      const token = authHeader.replace("Bearer ", "");
+      if (!token)
+        return {
+          userId: null,
+          token: null,
+          expiresIn: undefined,
+        };
+      const payload = getTokenPayload(token);
+      if (payload?.statusCode === 403)
+        throw new ForbiddenError(payload.errorMessage);
+      const { sub, exp } = payload;
+
+      if (exp - Date.now() <= 0)
+        return {
+          userId: null,
+          token: null,
+          expiresIn: undefined,
+        };
+
+      return {
+        userId: sub,
+        expiresIn: exp,
+        token,
+      };
+    }
+  } else if (authToken) {
+    const payload = getTokenPayload(authToken);
+    if (payload?.statusCode === 403)
+      throw new ForbiddenError(payload.errorMessage);
+    const { sub, exp } = payload;
+
+    if (exp - Date.now() <= 0)
+      return {
+        userId: null,
+        token: null,
+        expiresIn: undefined,
+      };
+
+    return {
+      userId: sub,
+      expiresIn: exp,
+      token,
+    };
+  }
+
+  return {
+    userId: null,
+  };
+};
+
+// export async function getDynamicContext(userQuery, ctx) {
+//   const authHeader = ctx.connectionParams.Authorization;
+//   if (!authHeader) return null;
+//   const token = authHeader.replace("Bearer ", "");
+//   if (!token) {
+//     throw new AuthenticationError("No token found");
+//   }
+//   const { userId, userRole } = await getUserId(userQuery, undefined, token);
+//   return { userId, userRole };
+// }
 
 export const updateCartItems = ({ id, item, cartQueryUpdate }) =>
   cartQueryUpdate({
@@ -94,11 +128,6 @@ export const cartItem = (item) => {
   };
   if (item.modelId) createdItem.model = { connect: { id: item.modelId } };
   if (item.features) {
-    /*
-      create or connect (to do later)
-      feature.name
-      feature.item
-    */
     createdItem.features = { create: [...item.features] };
   }
   return createdItem;

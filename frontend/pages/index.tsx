@@ -1,11 +1,8 @@
 import client from "apollo-client";
-import Banner from "components/banner";
-import Categories from "components/categories-grid";
-import Featureds from "components/featured";
 import Layout from "components/layout";
-import Pods from "components/pod";
 import { parse } from "cookie";
 import type { GetServerSideProps, NextPage } from "next";
+import dynamic from "next/dynamic";
 import { BANNERS, FEATUREDS, PODS } from "queries";
 import { BannerType, CategoryType, FeaturedType, PodType } from "types";
 import {
@@ -13,6 +10,13 @@ import {
   fetchCategoriesResponse,
   fetchToken,
 } from "utils/helpers";
+
+const Banner = dynamic(() => import("../components/banner"));
+const Featureds = dynamic(() => import("../components/featured"));
+const Pods = dynamic(() => import("../components/pod"), { ssr: false });
+const Categories = dynamic(() => import("../components/categories-grid"), {
+  ssr: false,
+});
 
 const Home: NextPage<{
   categories: CategoryType[];
@@ -33,16 +37,16 @@ const Home: NextPage<{
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   const cookies = parse(req.headers.cookie || "");
 
   const { user, refreshToken, expires_in } = await fetchToken(
-    cookies.refresh_token
+    cookies.refresh_token,
   );
 
-  const cartItemsCountResponse = await fetchCartItemsCountResponse(
-    cookies.cartId,
-    user
+  const { cartItemsNumber, cartId } = await fetchCartItemsCountResponse(
+    res,
+    cookies.cartId ?? user?.cartId,
   );
 
   const categoriesResponse = await fetchCategoriesResponse();
@@ -68,10 +72,8 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
       refreshToken,
       user,
       expires_in,
-      initialCount:
-        cartItemsCountResponse !== 0
-          ? cartItemsCountResponse.data.cartItemsCount.count
-          : cartItemsCountResponse,
+      initialCount: cartItemsNumber,
+      cartId,
     },
   };
 };

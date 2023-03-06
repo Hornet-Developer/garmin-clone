@@ -29,16 +29,17 @@ const CategoryPage: NextPage<{
 export const getServerSideProps: GetServerSideProps = async ({
   params,
   req,
+  res,
 }) => {
   const cookies = parse(req.headers.cookie || "");
 
   const { refreshToken, user, expires_in } = await fetchToken(
-    cookies.refresh_token
+    cookies.refresh_token,
   );
 
-  const cartItemsCountResponse = await fetchCartItemsCountResponse(
-    cookies.cartId,
-    user
+  const { cartItemsNumber, cartId } = await fetchCartItemsCountResponse(
+    res,
+    cookies.cartId ?? user?.cartId,
   );
 
   const categoriesResponse = await fetchCategoriesResponse();
@@ -65,10 +66,8 @@ export const getServerSideProps: GetServerSideProps = async ({
       refreshToken,
       user,
       expires_in,
-      initialCount:
-        cartItemsCountResponse !== 0
-          ? cartItemsCountResponse.data.cartItemsCount.count
-          : cartItemsCountResponse,
+      initialCount: cartItemsNumber,
+      cartId,
     },
   };
 };

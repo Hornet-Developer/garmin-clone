@@ -3,30 +3,43 @@ import ErrorMessage from "components/error-handler/error-message";
 import FullScreenLoading from "components/loading/full-screen";
 import { useAuthContext } from "contexts/auth";
 import { useCartItemsCountContext } from "contexts/cartItemsCount";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { SIGNUP } from "queries/mutations";
 import { useRef, useState } from "react";
 import styled from "styled-components";
+import { removeCookieSession, setCookieSession } from "utils/cookieSession";
 
 const Signup = () => {
   const ref = useRef<HTMLInputElement | null>(null);
   const [termsChecked, setTermsChecked] = useState(false);
+  const { cartId } = useAuthContext();
+
   const [signup, { loading, error }] = useMutation(SIGNUP);
-  const { setLoggedUser, setToken } = useAuthContext();
+
+  const { setLoggedUser, setToken, setCartId } = useAuthContext();
   const { setQuantity } = useCartItemsCountContext();
   const router = useRouter();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     signup({
-      variables: { username: ref.current?.value },
+      variables: { username: ref.current?.value, cartId },
     })
       .then((response) => {
-        setToken(response.data.signup?.refresh_token);
-        setLoggedUser(response.data.signup?.user);
-        setQuantity(response.data.signup?.totalQuantity);
-        router.replace("/");
+        if (response.data.signup?.token) {
+          const data = response.data.signup;
+          setCookieSession({
+            name: "refresh_token",
+            value: data.token,
+            expiresIn: data.expiresIn,
+          });
+          if (cartId) removeCookieSession("cartId");
+          setToken(data.token);
+          setCartId(null);
+          setLoggedUser(data.user);
+          setQuantity(data.totalQuantity);
+          router.replace("/");
+        }
       })
       .catch(() => {});
   };

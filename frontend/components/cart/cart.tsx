@@ -1,6 +1,5 @@
 import { useMutation } from "@apollo/client";
 import FullScreenLoading from "components/loading/full-screen";
-import { useAuthContext } from "contexts/auth";
 import { useCartItemsCountContext } from "contexts/cartItemsCount";
 import { useRouter } from "next/router";
 import { TRefreshQuery } from "pages/cart/[id]";
@@ -10,20 +9,25 @@ import { MdClose } from "react-icons/md";
 import { CartItemType } from "types";
 import Quantity from "./quantity";
 import { CartBox } from "./styles";
+import { useAuthContext } from "contexts/auth";
 
 const Cart: React.FC<{ cartItem: CartItemType; refetch: TRefreshQuery }> = ({
   cartItem,
   refetch,
 }) => {
   const { deleteItem } = useCartItemsCountContext();
-  const { token } = useAuthContext();
+  const { cartId, token } = useAuthContext();
   const [deleteItemMutation, { loading }] = useMutation(DELETE_CART_ITEM);
   const router = useRouter();
 
   const handleDelete = useCallback(async (itemId: string) => {
     await deleteItemMutation({
-      variables: { itemId },
-      context: { headers: token ? { Authorization: `Bearer ${token}` } : {} },
+      variables: { itemId, cartId },
+      context: {
+        headers: token
+          ? { Authorization: `Bearer ${token}` }
+          : {},
+      },
     }).then((response) => {
       deleteItem(response.data?.deletecartItem?.quantity);
       refetch({ cartId: router.query.id });

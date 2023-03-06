@@ -8,26 +8,39 @@ import { LOGIN } from "queries/mutations";
 import { useRef } from "react";
 import styled from "styled-components";
 import ErrorMessage from "../error-handler/error-message";
+import { removeCookieSession, setCookieSession } from "utils/cookieSession";
 
 const Login = () => {
   const ref = useRef<HTMLInputElement | null>(null);
   const [login, { loading, error }] = useMutation(LOGIN);
-  const { setLoggedUser, setToken } = useAuthContext();
+  const { setLoggedUser, setToken, setCartId, cartId } = useAuthContext();
   const { setQuantity } = useCartItemsCountContext();
   const router = useRouter();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     login({
-      variables: { username: ref.current?.value },
+      variables: { username: ref.current?.value, cartId },
     })
       .then((response) => {
-        setToken(response.data.login?.refresh_token);
-        setLoggedUser(response.data.login?.user);
-        setQuantity(response.data.login?.totalQuantity);
-        router.replace("/");
+        if (response.data?.login?.token) {
+          const data = response.data.login;
+          setCookieSession({
+            name: "refresh_token",
+            value: data.token,
+            expiresIn: data.expiresIn,
+          });
+          if (cartId) removeCookieSession("cartId");
+          setToken(data.token);
+          setCartId(data.user.cartId);
+          setLoggedUser(data.user);
+          setQuantity(data.totalQuantity);
+          router.replace("/");
+        }
       })
-      .catch(() => {});
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   return (

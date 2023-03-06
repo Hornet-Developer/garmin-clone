@@ -23,5 +23,5 @@ module.exports = merge([
     },
   },
   parts.clean(),
-  parts.copyFiles(CURRENT_WORKING_DIR),
+  // parts.copyFiles(CURRENT_WORKING_DIR),
 ]);

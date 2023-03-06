@@ -1,5 +1,4 @@
 import { ForbiddenError, UserInputError } from "apollo-server-core";
-import { getTokenPayload } from "../utils";
 
 function banners(_, __, { prisma }) {
   return prisma.banner.findMany();
@@ -109,7 +108,7 @@ async function products(
   return products;
 }
 
-async function productsByCategory(_, { categoryId, serieId }, { prisma, req }) {
+async function productsByCategory(_, { categoryId, serieId }, { prisma }) {
   if (serieId) {
     const existSerie = await prisma.serie.findMany({
       where: {
@@ -162,7 +161,7 @@ function product(_, { id }, { prisma }) {
 async function cart(
   _,
   { cartId },
-  { prisma, userId, cookies, cartId: authedCartId }
+  { prisma, userId, cartId: authedCartId }
 ) {
   if (userId) {
     if (cartId !== authedCartId) throw new ForbiddenError("Forbidden Request");
@@ -172,8 +171,8 @@ async function cart(
     });
   }
 
-  if (cookies?.cartId) {
-    if (cookies.cartId !== cartId)
+  if (cartId) {
+    if (cartId !== cartId)
       throw new ForbiddenError("Forbidden Request");
     return await prisma.cart.findUnique({
       where: { id: cartId },
@@ -199,12 +198,12 @@ async function initialCart(_, { cartId }, { prisma }) {
   });
 }
 
-async function fetchUserSession(_, __, { prisma, userId, token }) {
+async function fetchUserSession(_, __, { prisma, userId, token, expiresIn }) {
   if (!userId) {
     return {
       user: null,
-      refresh_token: null,
-      expires_in: null,
+      token: null,
+      expiresIn: null,
     };
   }
 
@@ -214,12 +213,21 @@ async function fetchUserSession(_, __, { prisma, userId, token }) {
   });
   if (!user) throw new AuthenticationError(`user doesn't authenticated`);
 
-  const payload = getTokenPayload(token);
+  const authedCart = await prisma.cart.findUnique({
+    where: { id: user.cartId },
+    include: { cartItems: true },
+  });
+
+  const totalQuantity = authedCart.cartItems.reduce((acc, item) => {
+    acc += item.quantity;
+    return acc;
+  }, 0);
 
   return {
     user,
-    refresh_token: token,
-    expires_in: payload.exp,
+    totalQuantity,
+    token: token,
+    expiresIn,
   };
 }
 

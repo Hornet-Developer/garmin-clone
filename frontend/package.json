@@ -6,14 +6,17 @@
     "dev": "next dev",
     "build": "next build",
     "heroku-postbuild": "npm run build",
-    "start": "next start -p $PORT",
+    "start": "next start",
     "lint": "next lint",
-    "test": "jest --watch"
+    "test": "jest --watch",
+    "cypress": "cypress open"
   },
   "dependencies": {
     "@apollo/client": "^3.6.9",
     "@faker-js/faker": "^7.4.0",
+    "cookie": "^0.5.0",
     "graphql": "^16.5.0",
+    "js-cookie": "^3.0.1",
     "lodash": "^4.17.21",
     "next": "12.2.2",
     "react": "18.2.0",
@@ -26,7 +29,9 @@
   "devDependencies": {
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",
+    "@testing-library/user-event": "^14.4.3",
     "@types/jest": "^28.1.4",
+    "@types/js-cookie": "^3.0.3",
     "@types/lodash": "^4.14.182",
     "@types/node": "18.0.3",
     "@types/react": "18.0.15",

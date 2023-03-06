@@ -3,7 +3,6 @@ import { useAuthContext } from "contexts/auth";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { INITIAL_CART } from "queries";
-import { useCookies } from "react-cookie";
 import { FaCheck } from "react-icons/fa";
 import styled from "styled-components";
 
@@ -14,11 +13,10 @@ const AddedToCart: React.FC<{
   modelName?: string;
 }> = ({ name, imgUrl, description, modelName }) => {
   const router = useRouter();
-  const { loggedUser, token } = useAuthContext();
-  const [cookies] = useCookies(["cartId"]);
+  const { loggedUser, cartId: guestCardId, token } = useAuthContext();
 
-  const { data, error } = useQuery(INITIAL_CART, {
-    variables: { cartId: loggedUser?.cartId || cookies.cartId },
+  const { data } = useQuery(INITIAL_CART, {
+    variables: { cartId: loggedUser?.cartId || guestCardId },
     context: {
       headers: token
         ? {
@@ -28,7 +26,7 @@ const AddedToCart: React.FC<{
     },
   });
 
-  const cartId = data?.initialCart?.id || cookies?.cartId;
+  const cartId = data?.initialCart?.id || guestCardId;
 
   return (
     <div className="pt-12 pb-4 border-[1px] border-solid border-grey-300">

@@ -1,4 +1,4 @@
-import { useToogleNav } from "contexts/toggle-nav";
+import { useToggleNav } from "contexts/toggle-nav";
 import { AiOutlineSearch } from "react-icons/ai";
 import { MdOutlineClose } from "react-icons/md";
 import { SearchForm } from "./styles";
@@ -10,7 +10,7 @@ const SearchBar = ({
   isDisplay: boolean;
   toggleSearchBar: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-  const { isOpen } = useToogleNav();
+  const { isOpen } = useToggleNav();
 
   return (
     <div

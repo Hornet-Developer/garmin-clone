@@ -1,4 +1,3 @@
-import client from "apollo-client";
 import Layout from "components/layout";
 import Login from "components/login";
 import { parse } from "cookie";
@@ -19,11 +18,12 @@ const LoginPage: NextPage<{
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   const cookies = parse(req.headers.cookie || "");
 
-  const cartItemsCountResponse = await fetchCartItemsCountResponse(
-    cookies.cartId
+  const { cartItemsNumber, cartId } = await fetchCartItemsCountResponse(
+    res,
+    cookies.cartId,
   );
 
   const categoriesResponse = await fetchCategoriesResponse();
@@ -31,10 +31,8 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
   return {
     props: {
       categories: categoriesResponse.data.categories,
-      initialCount:
-        cartItemsCountResponse !== 0
-          ? cartItemsCountResponse.data.cartItemsCount.count
-          : cartItemsCountResponse,
+      initialCount: cartItemsNumber,
+      cartId,
     },
   };
 };

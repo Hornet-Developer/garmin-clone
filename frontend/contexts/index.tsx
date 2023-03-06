@@ -9,15 +9,17 @@ import { ToggleNavProvider } from "./toggle-nav";
 const Provider = ({
   children,
   authInfo,
+  guestCartId,
   initialCount,
 }: {
   children: React.ReactNode;
   authInfo: TAuthInfo;
+  guestCartId: string | null;
   initialCount: number;
 }) => (
   <ToggleNavProvider>
     <BreakpointProvider queries={mq}>
-      <AuthProvider authInfo={authInfo}>
+      <AuthProvider authInfo={authInfo} guestCartId={guestCartId}>
         <SsrLoadingProvider>
           <CookiesProvider>
             <CartItemsCountProvider initialCount={initialCount}>

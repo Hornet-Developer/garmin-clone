@@ -1,18 +1,18 @@
 import { useMutation } from "@apollo/client";
-import { useAuthContext } from "contexts/auth";
 import { useRouter } from "next/router";
 import { ADD_TO_CART } from "queries/mutations";
 import styled from "styled-components";
 import { useProductInfoContext } from "./product-info-context";
 import FullScreenLoading from "components/loading/full-screen";
 import { useCartItemsCountContext } from "contexts/cartItemsCount";
+import { useAuthContext } from "contexts/auth";
 
 const Action: React.FC<{
   serIsAddedToCart: React.Dispatch<React.SetStateAction<boolean>>;
   price: number;
 }> = ({ serIsAddedToCart, price }) => {
-  const { token } = useAuthContext();
   const { addItem } = useCartItemsCountContext();
+  const {cartId, token} = useAuthContext()
 
   const {
     state: { model, features },
@@ -29,6 +29,7 @@ const Action: React.FC<{
     addProductToCart({
       variables: {
         price,
+        cartId,
         item: {
           productId,
           modelId: model?.id,
@@ -39,7 +40,9 @@ const Action: React.FC<{
         },
       },
       context: {
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
+        headers: token
+          ? { Authorization: `Bearer ${token}` }
+          : {},
       },
     })
       .then(() => {

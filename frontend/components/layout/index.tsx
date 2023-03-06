@@ -1,6 +1,6 @@
 import Header from "components/header";
 import { FullScreenNewPage, Loader } from "components/loading/styles";
-import { useToogleNav } from "contexts/toggle-nav";
+import { useToggleNav } from "contexts/toggle-nav";
 import { useSsrLoading } from "hooks/useSsrLoading";
 import { CategoryType } from "types";
 import Head from "./head";
@@ -10,7 +10,7 @@ const Layout: React.FC<{
   children: React.ReactNode;
   categories?: CategoryType[];
 }> = ({ title, categories, children }) => {
-  const { isOpen } = useToogleNav();
+  const { isOpen } = useToggleNav();
   const { loading } = useSsrLoading();
 
   return (

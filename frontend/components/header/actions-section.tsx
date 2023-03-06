@@ -2,7 +2,7 @@ import { AiOutlineShoppingCart } from "react-icons/ai";
 import { VscAccount } from "react-icons/vsc";
 import { BsQuestionCircle } from "react-icons/bs";
 import SearchBar from "./search-bar";
-import { createRef, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import AccountUtilBar from "./acount-utility-bar";
 import { memo } from "react";
 import { useMutation } from "@apollo/client";
@@ -11,14 +11,14 @@ import { useAuthContext } from "contexts/auth";
 import { useRouter } from "next/router";
 import FullScreenLoading from "components/loading/full-screen";
 import { useCartItemsCountContext } from "contexts/cartItemsCount";
-import { useToogleNav } from "contexts/toggle-nav";
+import { useToggleNav } from "contexts/toggle-nav";
 import { useOutsideClick } from "hooks/useOutsideClick";
 
 const ActionsSection = memo(() => {
   const [isDisplay, toggleSearchBar] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const { isOpen: isNavOpen, closeNav } = useToogleNav();
-  const { loggedUser, token } = useAuthContext();
+  const { isOpen: isNavOpen, closeNav } = useToggleNav();
+  const { loggedUser, cartId } = useAuthContext();
   const router = useRouter();
   const { cartItemsCount } = useCartItemsCountContext();
   const targetRef = useRef<HTMLDivElement | null>(null);
@@ -36,9 +36,9 @@ const ActionsSection = memo(() => {
       return;
     }
     fetchOrcreateCart({
-      context: { headers: token ? { Authorization: `Bearer ${token}` } : {} },
-    }).then((data) => {
-      router.push(`/cart/${data.data.fetchOrcreateCart.id}`);
+      variables: { cartId },
+    }).then((response) => {
+      router.push(`/cart/${response.data.fetchOrcreateCart.id}`);
     });
   };
 

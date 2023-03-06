@@ -1,10 +1,10 @@
-import { useToogleNav } from "contexts/toggle-nav";
+import { useToggleNav } from "contexts/toggle-nav";
 import Link from "next/link";
 import { CategoryType } from "types";
 import { NavBox, NavItemBox } from "./styles";
 
 const NavItem = ({ category }: { category: CategoryType }) => {
-  const { closeNav } = useToogleNav();
+  const { closeNav } = useToggleNav();
 
   return (
     <Link href={`/categories/${category.id}`}>
@@ -16,7 +16,7 @@ const NavItem = ({ category }: { category: CategoryType }) => {
 };
 
 const Nav = ({ categories }: { categories?: CategoryType[] }) => {
-  const { isOpen } = useToogleNav();
+  const { isOpen } = useToggleNav();
 
   return (
     <NavBox isopen={isOpen ? isOpen.toString() : undefined}>

@@ -5,10 +5,10 @@ import { BottomSection, Container, TopSection } from "./styles";
 import ActionsSection from "./actions-section";
 import { CategoryType } from "types";
 import Nav from "./nav";
-import { useToogleNav } from "contexts/toggle-nav";
+import { useToggleNav } from "contexts/toggle-nav";
 
 const Logo = () => {
-  const { isOpen, closeNav } = useToogleNav();
+  const { isOpen, closeNav } = useToggleNav();
 
   return (
     <Link href="/">

@@ -1,12 +1,12 @@
 import { useMutation } from "@apollo/client";
 import FullScreenLoading from "components/loading/full-screen";
-import { useAuthContext } from "contexts/auth";
 import { useCartItemsCountContext } from "contexts/cartItemsCount";
 import { useRouter } from "next/router";
 import { UPDATE_CART } from "queries/mutations";
 import { memo, useState } from "react";
 import { DropDown } from "styles/components";
 import { DropdownBox } from "./styles";
+import { useAuthContext } from "contexts/auth";
 
 const fillOptions = (quantity: number) =>
   [...new Array(quantity + 10)].map((_, index) => index + 1);
@@ -17,11 +17,11 @@ const Quantity: React.FC<{ quantity: number; price: number; itemId: string }> =
     const [selected, setSelected] = useState(quantity);
     const [options, setOptions] = useState(() => fillOptions(quantity));
     const [updateCart, { loading }] = useMutation(UPDATE_CART);
-    const { token } = useAuthContext();
     const { updateQuantity } = useCartItemsCountContext();
+    const { token } = useAuthContext();
 
     const handleChangeQuntity = (
-      event: React.ChangeEvent<HTMLSelectElement>
+      event: React.ChangeEvent<HTMLSelectElement>,
     ) => {
       const newQuantity = parseInt(event.target.value);
 

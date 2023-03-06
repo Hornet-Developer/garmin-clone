@@ -1,20 +1,22 @@
-import { AuthenticationError, ForbiddenError } from "apollo-server-core";
-import { cartItem, signToken, updateCartItems } from "../utils";
+import {
+  AuthenticationError,
+  ForbiddenError,
+  UserInputError,
+} from "apollo-server-core";
+import { cartItem, getTokenPayload, signToken } from "../utils";
 import currency from "currency.js";
 
-async function login(_, { username }, { prisma, res, cookies }) {
-  const user = await prisma.user.findUnique({ where: { username } });
+async function login(_, { username, cartId }, { prisma }) {
+  const user = await prisma.user.findUnique({
+    where: {
+      username,
+    },
+  });
   if (!user) throw new AuthenticationError(`${username} doesn't exist`);
 
-  const { refresh_token, expires_in } = signToken(user.id);
+  const token = signToken(user.id);
 
-  res.cookie("refresh_token", refresh_token, {
-    httpOnly: true,
-    sameSite: "strict",
-    secure: true,
-    // signed: true,
-    maxAge: expires_in,
-  });
+  const payload = getTokenPayload(token);
 
   const authedCart = await prisma.cart.findUnique({
     where: { id: user.cartId },
@@ -26,9 +28,9 @@ async function login(_, { username }, { prisma, res, cookies }) {
     return acc;
   }, 0);
 
-  if (cookies?.cartId) {
+  if (cartId) {
     const guestCart = await prisma.cart.findUnique({
-      where: { id: cookies.cartId },
+      where: { id: cartId },
       include: { cartItems: true },
     });
 
@@ -60,66 +62,67 @@ async function login(_, { username }, { prisma, res, cookies }) {
     });
 
     await prisma.cart.delete({ where: { id: guestCart.id } });
-
-    res.clearCookie("cartId");
   }
+
+  return {
+    user,
+    token,
+    expiresIn: payload.exp,
+    totalQuantity,
+  };
+}
+
+async function refreshToken(_, __, { prisma, userId, token }) {
+  if (!token) throw new ForbiddenError(`User is not authenticated`);
+
+  const user = await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+  });
+
+  if (!user) throw new ForbiddenError(`User is not authenticated`);
+
+  const refreshedToken = signToken(userId);
+
+  const payload = getTokenPayload(refreshedToken);
+
+  const authedCart = await prisma.cart.findUnique({
+    where: { id: user.cartId },
+    include: { cartItems: true },
+  });
+
+  const totalQuantity = authedCart.cartItems.reduce((acc, item) => {
+    acc += item.quantity;
+    return acc;
+  }, 0);
 
   return {
     user,
     totalQuantity,
-    refresh_token,
-    expires_in,
+    token: refreshedToken,
+    expiresIn: payload.exp,
   };
 }
 
-async function refreshToken(_, __, { prisma, userId, res }) {
-  if (!userId) {
-    return {
-      user: null,
-      refresh_token: null,
-      expires_in: null,
-    };
-  }
-
-  const user = await prisma.user.findUnique({ where: { id: userId } });
-  if (!user) throw new AuthenticationError(`user doesn't authenticated`);
-
-  const { refresh_token, expires_in } = signToken(userId);
-
-  res.cookie("refresh_token", refresh_token, {
-    httpOnly: true,
-    sameSite: "strict",
-    secure: true,
-    // signed: true,
-    maxAge: expires_in,
-  });
+function logout(_, __, { token }) {
+  if (!token) new ForbiddenError(`User is not authenticated`);
 
   return {
-    user,
-    refresh_token,
-    expires_in,
-  };
-}
-
-function logout(_, __, { res }) {
-  res.clearCookie("refresh_token");
-  return {
-    message: "You have been successfully logged out",
+    statusCode: 200,
   };
 }
 
 async function fetchOrcreateCart(
   _,
-  __,
-  { prisma, userId, res, cookies, cartId }
+  { cartId: guestCartId },
+  { prisma, userId, cartId },
 ) {
-  const guestCartId = cookies?.cartId;
-
   if (userId) {
     const cart = await prisma.cart.findUnique({ where: { id: cartId } });
     if (!cart)
       throw new UserInputError(
-        `${user.name} with the id ${user.id} must has a cart`
+        `${user.name} with the id ${user.id} must has a cart`,
       );
     return cart;
   }
@@ -134,18 +137,14 @@ async function fetchOrcreateCart(
     data: {},
   });
 
-  res.cookie("cartId", cart.id);
-
   return cart;
 }
 
 async function addItemToCart(
   _,
-  { item, price },
-  { prisma, userId, res, cookies, cartId }
+  { item, price, cartId: guestCartId },
+  { prisma, userId, cartId },
 ) {
-  const guestCartId = cookies?.cartId;
-
   if (!guestCartId && !userId) {
     const cart = await prisma.cart.create({
       data: {
@@ -159,8 +158,6 @@ async function addItemToCart(
       },
     });
 
-    res.cookie("cartId", cart.id);
-
     return cart;
   }
 
@@ -170,7 +167,7 @@ async function addItemToCart(
 
   const totalPrice = currency(cart.subtotal).add(currency(price));
 
-  return prisma.cart.update({
+  const updatedCart = await prisma.cart.update({
     where: { id: cartId || guestCartId },
     data: {
       subtotal: totalPrice.value,
@@ -181,12 +178,16 @@ async function addItemToCart(
         create: [cartItem(item)],
       },
     },
+    include: {
+      cartItems: true
+    }
   });
+
+  return updatedCart
 }
 
-async function updateCart(_, { cartId, item }, { prisma, cookies, userId }) {
-  if (!userId && !cookies?.cartId)
-    throw new ForbiddenError("Forbidden Request");
+async function updateCart(_, { cartId, item }, { prisma, userId }) {
+  if (!userId && !cartId) throw new ForbiddenError("Forbidden Request");
 
   const cart = await prisma.cart.findUnique({
     where: { id: cartId },
@@ -200,14 +201,14 @@ async function updateCart(_, { cartId, item }, { prisma, cookies, userId }) {
           .reduce(
             (acc, item) =>
               currency(acc).add(
-                currency(item.product.price).multiply(item.quantity)
+                currency(item.product.price).multiply(item.quantity),
               ),
-            0
+            0,
           )
       : { value: 0 };
 
   totalPrice = currency(totalPrice.value).add(
-    currency(item.price).multiply(item.quantity)
+    currency(item.price).multiply(item.quantity),
   );
 
   return prisma.cart.update({
@@ -229,18 +230,22 @@ async function updateCart(_, { cartId, item }, { prisma, cookies, userId }) {
   });
 }
 
-async function deletecartItem(_, { itemId }, { prisma, cookies, cartId }) {
+async function deletecartItem(
+  _,
+  { itemId, cartId: guestCartId },
+  { prisma, cartId },
+) {
   const deletedItem = await prisma.cartItem.delete({
     where: { id: itemId },
     include: { product: true },
   });
 
   const cart = await prisma.cart.findUnique({
-    where: { id: cartId || cookies?.cartId },
+    where: { id: cartId || guestCartId },
   });
 
   const deletedItemPrice = currency(deletedItem.product.price).multiply(
-    deletedItem.quantity
+    deletedItem.quantity,
   );
 
   const totalPrice = currency(cart.subtotal).subtract(deletedItemPrice.value);
@@ -258,20 +263,21 @@ async function deletecartItem(_, { itemId }, { prisma, cookies, cartId }) {
   return { quantity: deletedItem.quantity };
 }
 
-async function signup(_, { username }, { prisma, res, cookies }) {
+async function signup(_, { username, cartId }, { prisma }) {
+  const existUser = await prisma.user.findUnique({
+    where: {
+      username,
+    },
+  });
+
+  if (existUser) throw new UserInputError("This user is already exist!");
+
   const user = await prisma.user.create({
     data: { username, role: "Customer", cart: { create: {} } },
   });
 
-  const { refresh_token, expires_in } = signToken(user.id);
-
-  res.cookie("refresh_token", refresh_token, {
-    httpOnly: true,
-    sameSite: "strict",
-    secure: true,
-    // signed: true,
-    maxAge: expires_in,
-  });
+  const token = signToken(user.id);
+  const payload = getTokenPayload(token);
 
   const authedCart = await prisma.cart.findUnique({
     where: { id: user.cartId },
@@ -283,9 +289,9 @@ async function signup(_, { username }, { prisma, res, cookies }) {
     return acc;
   }, 0);
 
-  if (cookies?.cartId) {
+  if (cartId) {
     const guestCart = await prisma.cart.findUnique({
-      where: { id: cookies.cartId },
+      where: { id: cartId },
       include: { cartItems: true },
     });
 
@@ -317,19 +323,15 @@ async function signup(_, { username }, { prisma, res, cookies }) {
     });
 
     await prisma.cart.delete({ where: { id: guestCart.id } });
-
-    res.clearCookie("cartId");
   }
 
   return {
     user,
+    token,
+    expiresIn: payload.exp,
     totalQuantity,
-    refresh_token,
-    expires_in,
   };
 }
-
-// function createOrder(_, { products }, { prisma, res }) {}
 
 const Mutation = {
   login,

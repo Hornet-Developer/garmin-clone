@@ -1,8 +1,8 @@
-import { useToogleNav } from "contexts/toggle-nav";
+import { useToggleNav } from "contexts/toggle-nav";
 import { HamburgerBox, HamburgerItem } from "./styles";
 
 const Hamburger = () => {
-  const { isOpen, toggleNav } = useToogleNav();
+  const { isOpen, toggleNav } = useToggleNav();
 
   return (
     <HamburgerBox onClick={toggleNav}>
