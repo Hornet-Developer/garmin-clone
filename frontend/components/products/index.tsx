@@ -1,9 +1,8 @@
-import { useLazyQuery } from "@apollo/client";
+import { useLazyQuery, useQuery } from "@apollo/client";
 import FullScreenLoading from "components/loading/full-screen";
 import SortBy from "components/products-section/sortby";
 import { useRouter } from "next/router";
 import { PRODUCTS_BY_CATEGORY } from "queries";
-import { useEffect } from "react";
 import { ProductType } from "types";
 import ProductCard from "./product-card";
 
@@ -11,27 +10,13 @@ const Products: React.FC<{ products: ProductType[] }> = ({ products }) => {
   const router = useRouter();
   const { query } = router;
 
-  const [filterProducts, { loading, error, data }] = useLazyQuery(
-    PRODUCTS_BY_CATEGORY,
-    {
-      ssr: false,
-    }
-  );
-
-  useEffect(() => {
-    if (query.serieId) {
-      filterProducts({
-        variables: {
-          categoryId: query.id as string,
-          serieId: query.serieId as string,
-        },
-      });
-    } else {
-      filterProducts({
-        variables: { categoryId: (query.id || query.categoryId) as string },
-      });
-    }
-  }, [query.serieId, query.id, query.categoryId]);
+  const { loading, error, data } = useQuery(PRODUCTS_BY_CATEGORY, {
+    variables: {
+      categoryId: query.id as string,
+      serieId: query.serieId as string,
+    },
+    ssr: false,
+  });
 
   return (
     <div className="laptop:flex laptop:flex-col laptop:w-full xs:p-4">
@@ -47,7 +32,7 @@ const Products: React.FC<{ products: ProductType[] }> = ({ products }) => {
             (data?.productsByCategory || products).map(
               (product: ProductType) => (
                 <ProductCard key={product.id} product={product} />
-              )
+              ),
             )}
         </div>
       )}

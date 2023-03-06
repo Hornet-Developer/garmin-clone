@@ -53,7 +53,7 @@ async function main() {
     path: "/graphql",
     cors: {
       credentials: true,
-      origin: ["http://localhost:3000"],
+      origin: ["http://localhost:3000", "http://192.168.100.10:3000",],
     },
   });
 
